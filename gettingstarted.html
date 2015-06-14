@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Streamsx.sparkmllib by IBMStreams</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Streamsx.sparkmllib</h1>
+        <p>Toolkit for real-time scoring using Apache Spark&#39;s machine learning library</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+        <a href="https://github.com/IBMStreams/streamsx.sparkMLLib" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/IBMStreams/streamsx.sparkMLLib/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/IBMStreams/streamsx.sparkMLLib/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h2>
+<a id="gettingstarted" class="anchor" href="#gettingstarted" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>To create applications that use the Spark MLlib Toolkit operators, download the toolkit from <a href="https://github.com/IBMStreams/streamsx.sparkMLLib/zipball/master">here.</a> You must set the appropriate environment variables given below and configure either InfoSphere® Streams Studio or the SPL compiler to be aware of the location of the toolkit.</p>
+<h2>Before you begin</h2>
+<p>IBM® InfoSphere Streams must be installed and the STREAMS_INSTALL environment variable must be set to the InfoSphere Streams installation directory. </p>
+<p>In addition, a version of Apache Spark must be downloaded and installed from <a href="https://spark.apache.org/downloads.html">https://spark.apache.org/downloads.html</a> and the SPARK_HOME environment variable must be set to the location where Spark is installed.
+</p>
+<h2>Spark Models</h2>
+<p>This toolkit provides a number of operators that can load a stored Spark MLlib model and use it to perform real time scoring on incoming tuple data.</p> 
+
+<p>For example, the <b>SparkCollaborativeFilteringALS</b> operator
+can load a Spark collaborative filtering model (of type <i>MatrixFactorizationModel</i> in the Spark API). In order for the operator to be able to use this model within Streams, the Spark program that created the original
+model must store the model. The following scala code demonstrates how the model can be saved to HDFS:
+
+<pre><code>
+...
+//Generate a MatrixFactorizationModel by training against test data
+val model = ALS.train(training, rank, numIter, lambda)
+
+//Save the generated model to the filesystem
+model.save(sparkContext, "hdfs://some/path/my_model")
+...
+</code></pre>
+</p>
+
+<p>
+Once the model has been persisted, the path to the persisted model would be passed in as a parameter to the <b>SparkCollaborativeFilteringALS</b> operator. The following code demonstrates how this would be done in the SPL program:
+
+<pre><code>
+...
+	(stream&lt;int32 user, int32 counter, list&lt;int32&gt; analysisResult&gt; SparkCollaborativeFilteringALSOut) as
+			SparkCollaborativeFilteringALSOp1 =
+			SparkCollaborativeFilteringALS(InputPort1)
+		{
+			param
+				analysisType : RecommendProducts ;
+				attr1 : Beacon_1_out0.user ;
+				attr2 : Beacon_1_out0.counter ;
+				<b>modelPath : "hdfs://some/path/my_model" ;</b>
+		}
+...		
+</code></pre>
+
+On initialization, the operator will load the model. Each incoming tuple will be used to generate a score using the model and the score would be passed as an attribute called 'analysisResult' on the output schema.
+</p>
+
+<h2>Procedure</h2>
+<ul>
+<li>Unzip the downloaded toolkit into a location on the filesystem.</li>
+<li><p>Develop your application following the guidelines specified in the Spark Models section above.</p>
+<p>InfoSphere Streams Studio can help you create and debug SPL and SPL mixed-mode applications. To use the operators from the Spark MLlib Toolkit in Streams Studio, you must add the toolkit location. See <a href="http://www-01.ibm.com/support/knowledgecenter/SSCRJU_4.0.0/com.ibm.streams.studio.doc/doc/tusing-working-with-toolkits-adding-toolkit-locations.html">Adding toolkit locations.</a></p>
+</li>
+
+<li><p>Build your application.</p>
+
+<p>You can use the sc command or Streams Studio.</p>
+
+<p>To build the application in Streams Studio, you must add the toolkit location if you did not already do so.</p>
+
+<p>To build the application from the command line, you must configure the SPL compiler to find the toolkit root directory. Use one of the following methods:
+<ul>
+<li>Set the STREAMS_SPLPATH environment variable to the root directory of a toolkit or multiple toolkits (with : as a separator).</p>
+<p>For example:</p>
+<pre><code>export STREAMS_SPLPATH=/some/path/to/toolkit/com.ibm.streamsx.sparkmllib</code></pre>
+</li>
+<li><p>Specify the -t or --spl-path command parameter when you run the sc command.</p>
+<p>For example:</p>
+<pre><code>sc -t /some/path/to/toolkit/com.ibm.streamsx.sparkmllib -M MyMain</code></pre>
+<p>where MyMain is the name of the SPL main composite.<br/>
+Note: These command parameters override the STREAMS_SPLPATH environment variable.</p>
+</li>
+</ul>
+
+<li><p>Start the InfoSphere Streams instance.</p>
+<p>Run the application. You can submit the application as a job by using the streamtool submitjob command or by using Streams Studio.</p>
+</li>
+</ul>
+
+
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/IBMStreams">IBMStreams</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>

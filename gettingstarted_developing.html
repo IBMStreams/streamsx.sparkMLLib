@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Streamsx.sparkmllib by IBMStreams</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Streamsx.sparkmllib</h1>
+        <p>Toolkit for real-time scoring using Apache Spark&#39;s machine learning library</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+        <a href="https://github.com/IBMStreams/streamsx.sparkMLLib" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/IBMStreams/streamsx.sparkMLLib/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/IBMStreams/streamsx.sparkMLLib/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h2>
+<a id="gettingstarted" class="anchor" href="#gettingstarted" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started with Development</h2>
+
+<p>To get started with developing and building the sparkmllib toolkit, follow the steps below:</p>
+
+<ol>
+<li>Clone the repository to your local file system.</li>
+<li>Install Maven</li>
+<li>Once Maven is installed, export M2_HOME="Mavin_Install_Location"</li>
+<li>Go to the root of the toolkit (com.ibm.streamsx.sparkmllib)</li>
+<li>Type "ant"</li>
+</ol>
+
+<p>This will invoke the Ant Build.  build.xml will in turn invoke Maven to download all dependencies required for Spark.  Once the dependencies are downloaded, build.xml will proceed to build the java files and call spl-make-toolkit.</p>
+
+<h2>
+<a id="user-content-getting-started-with-streams-studio" class="anchor" href="#getting-started-with-streams-studio" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started with Streams Studio</h2>
+
+<p>Note:  Make sure Ant and Maven are installed in your remote host.</p>
+
+<p>To import this toolkit project into Streams Studio:</p>
+
+<ol>
+<li>Install "Egit" into Streams Studio  (<a href="https://www.eclipse.org/egit/">https://www.eclipse.org/egit/</a>)</li>
+<li>In the Git Repositories View, click on the "Clone a Git Repitory" button</li>
+<li>After the repository is cloned, follow the dialog to import existing project into your workspace.</li>
+<li>You will not have the dependencies needed for Studio to build the project correctly.  Go to the command line and to the root of the toolkit project (for example, streamsx.sparkmllib/com.ibm.streamsx.sparkmllib).</li>
+<li>Type "ant maven-deps" - to kick off a build at the command line for the first time.  This will get all the dependencies downloaded.</li>
+<li>Refresh your project in Streams Studio to get all the jar files included in your workspace</li>
+<li>Build the com.ibm.streamsx.sparkmllib toolkit project in Studio - The build should be successful at this point.</li>
+</ol>
+
+<h2>
+<a id="user-content-getting-started-with-streams-studio-on-windows" class="anchor" href="#getting-started-with-streams-studio-on-windows" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started with Streams Studio on Windows</h2>
+
+<p>Note:  Make sure Ant and Maven are installed in your remote host.</p>
+
+<p>You can set up remote development on Windows.</p>
+
+<p>To import this toolkit project into Streams Studio on Windows:</p>
+
+<ol>
+<li>Install "Egit" into Streams Studio  (<a href="https://www.eclipse.org/egit/">https://www.eclipse.org/egit/</a>)</li>
+<li>In the Git Repositories View, click on the "Clone a Git Repitory" button</li>
+<li>After the repository is cloned, follow the dialog to import existing project into your workspace.</li>
+<li>Select the toolkit project, Right click -&gt; Copy project to remote host - This will copy the project to the remote Linux host where actual compilation needs to happen.</li>
+<li>You will not have the dependencies needed for Studio to build the project correctly at this point.  Open a command prompt to the remote Linux host.</li>
+<li>Go to the root directory of the toolkit project</li>
+<li>Type "ant maven-deps" - to kick off the ant build that pulls in all the necessary dependencies.</li>
+<li>In Streams Studio on Windows, select the "opt" folder under the toolkit project.  Right click -&gt; Remote Reconciler -&gt; Pull from (remote host)  - This action will pull all the jar files from your remote Linux host to your Windows machine.</li>
+<li>Build the com.ibm.streamsx.sparkmllib toolkit project in Studio - The build should be successful at this point.</li>
+</ol>
+
+<p>For more information, documentation for the toolkit is available <a href="com.ibm.streamsx.sparkmllib/doc/spldoc/html/index.html">here</a></p>
+
+
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/IBMStreams">IBMStreams</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
