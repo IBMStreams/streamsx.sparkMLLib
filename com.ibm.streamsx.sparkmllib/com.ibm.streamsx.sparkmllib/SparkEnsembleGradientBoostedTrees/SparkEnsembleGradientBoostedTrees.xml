@@ -63,7 +63,7 @@
     </inputPorts>
     <outputPorts>
       <outputPortSet>
-        <description>This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type list&lt;float64&gt; or float64 depending on the 'analysisType' parameter.</description>
+        <description>This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type float64.</description>
         <windowPunctuationOutputMode>Free</windowPunctuationOutputMode>
         <cardinality>1</cardinality>
         <optional>false</optional>
