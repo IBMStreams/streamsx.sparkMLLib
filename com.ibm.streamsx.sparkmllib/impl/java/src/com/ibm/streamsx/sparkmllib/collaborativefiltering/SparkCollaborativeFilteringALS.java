@@ -1,4 +1,4 @@
-package com.ibm.streamsx.sparkmllib;
+package com.ibm.streamsx.sparkmllib.collaborativefiltering;
 
 import java.util.ArrayList;
 
@@ -20,8 +20,9 @@ import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
 import com.ibm.streams.operator.model.Parameter;
 import com.ibm.streams.operator.model.PrimitiveOperator;
+import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
 
-@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's collaborative filtering machine learning library.")
+//@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's collaborative filtering machine learning library.")
 @InputPortSet(cardinality=1,description="This input port is required. The operator expects 2 attributes of type int32 that will be used as input to the collaborative filtering algorithm.")
 @OutputPortSet(cardinality=1,description="This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type list<float64> or float64 depending on the 'analysisType' parameter.")
 public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<MatrixFactorizationModel> {

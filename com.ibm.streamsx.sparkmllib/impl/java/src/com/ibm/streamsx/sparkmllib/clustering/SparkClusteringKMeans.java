@@ -1,4 +1,4 @@
-package com.ibm.streamsx.sparkmllib;
+package com.ibm.streamsx.sparkmllib.clustering;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
-import com.ibm.streams.operator.model.PrimitiveOperator;
+import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
 
 //@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's kmeans clustering machine learning library.")
 @InputPortSet(cardinality=1,description="This input port is required. The operator expects an attribute of type list<float64> that will be used as input to the kmeans clustering algorithm.")

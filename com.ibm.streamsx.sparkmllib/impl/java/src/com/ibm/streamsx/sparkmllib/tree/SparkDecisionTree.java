@@ -1,4 +1,4 @@
-package com.ibm.streamsx.sparkmllib;
+package com.ibm.streamsx.sparkmllib.tree;
 
 import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.linalg.Vector;
@@ -6,6 +6,7 @@ import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
+import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibListToDoubleOperator;
 
 //@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's decision tree machine learning library.")
 @InputPortSet(cardinality=1,description="This input port is required. The operator expects an attribute of type list<float64> that will be used as input to the decision tree algorithm.")
