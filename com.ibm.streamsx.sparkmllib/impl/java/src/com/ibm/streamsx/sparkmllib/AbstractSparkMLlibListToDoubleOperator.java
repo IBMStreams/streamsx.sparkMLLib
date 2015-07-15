@@ -48,7 +48,7 @@ public abstract class AbstractSparkMLlibListToDoubleOperator<T> extends Abstract
 	}
 
 	@Override
-	public void process(StreamingInput<Tuple> stream, Tuple tuple)
+	public void processTuple(StreamingInput<Tuple> stream, Tuple tuple)
 			throws Exception {
 		//For each incoming tuple, extract the testDataAttr attribute value as a list of doubles
 		List<Double> testDataList = (List<Double>)tuple.getList(testDataAttr.getIndex());

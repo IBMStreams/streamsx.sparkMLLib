@@ -1,5 +1,6 @@
 package com.ibm.streamsx.sparkmllib;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +12,15 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.linalg.Vector;
 import org.apache.spark.mllib.linalg.Vectors;
 
+import com.ibm.json.java.JSONObject;
 import com.ibm.streams.operator.AbstractOperator;
 import com.ibm.streams.operator.Attribute;
 import com.ibm.streams.operator.OperatorContext;
 import com.ibm.streams.operator.OperatorContext.ContextCheck;
 import com.ibm.streams.operator.ProcessingElement;
 import com.ibm.streams.operator.StreamSchema;
+import com.ibm.streams.operator.StreamingInput;
+import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
@@ -48,6 +52,23 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 	protected static final String ANALYSISRESULT_ATTRIBUTE = "analysisResult";
 
 	public AbstractSparkMLlibOperator() {
+	}
+	
+	@ContextCheck
+	public static void checkControlPortInputAttribute(OperatorContextChecker checker) {
+		OperatorContext context = checker.getOperatorContext();
+		
+		if(context.getNumberOfStreamingInputs() == 2) {
+			StreamSchema schema = context.getStreamingInputs().get(1).getStreamSchema();
+			
+			//the first attribute must be of type rstring
+			Attribute jsonAttr = schema.getAttribute(0);
+			
+			//check if the output attribute is present where the result will be stored
+			if(jsonAttr != null && jsonAttr.getType().getMetaType() != MetaType.RSTRING) {
+				checker.setInvalidContext("The control port must have an attribute of type 'rstring', found {0}", new Object[] {jsonAttr.getType()});
+			}
+		}
 	}
 	
 	/**
@@ -126,6 +147,37 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 		model = loadModel(javaContext.sc(), modelPath);
 	}
 	
+	
+	
+	@Override
+	public void process(StreamingInput<Tuple> stream, Tuple tuple)
+			throws Exception {
+		if(stream.isControl()) {
+			processControlPort(stream, tuple);
+		}
+		else {
+			synchronized(model) {
+				processTuple(stream, tuple);
+			}
+		}
+	}
+	
+	protected void processControlPort(StreamingInput<Tuple> stream, Tuple tuple) {
+		String jsonString = tuple.getString(0);
+		try {
+			JSONObject config = JSONObject.parse(jsonString);
+			Boolean shouldReloadModel = (Boolean)config.get("reloadModel");
+			if(shouldReloadModel) {
+				synchronized(model) {
+					model = loadModel(javaContext.sc(), modelPath);
+				}
+			}
+		} catch (IOException e) {
+		}
+	}
+	
+	protected abstract void processTuple(StreamingInput<Tuple> stream, Tuple tuple) throws Exception;
+
 	private String getUniqueAppName(OperatorContext context) {
 		ProcessingElement pe = context.getPE();
 		return pe.getDomainId()+"_"+pe.getInstanceId()+"_"+pe.getPEId()+"_"+context.getName();
