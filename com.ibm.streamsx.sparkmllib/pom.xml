@@ -4,8 +4,8 @@
 	<groupId>com.ibm.streamsx.sparkmllib.</groupId>
 	<artifactId>streamsx.sparkmllib</artifactId>
 	<packaging>jar</packaging>
-	<version>0.7.0.0</version>
-	<name>com.ibm.streamsx.sparkmllib.</name>
+	<version>0.8.0.0</version>
+	<name>com.ibm.streamsx.sparkmllib</name>
 	<repositories>
 		 <repository>
 			<id>apache.snapshots</id>
