@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA Reference//EN" "reference.dtd">
+<reference id="spldoc_namespace">
+<title>Namespace <tt>com.ibm.streamsx.sparkmllib.regression</tt></title>
+<refbody>
+<section>
+<p>
+<xref href="../toolkits/toolkits.xml">IBMStreams com.ibm.streamsx.sparkmllib Toolkit</xref> &gt; <xref href="tk$com.ibm.streamsx.sparkmllib.xml">com.ibm.streamsx.sparkmllib 0.8.0.0</xref> &gt; com.ibm.streamsx.sparkmllib.regression</p>
+</section>
+<section>
+  <title outputclass="splhead-1">Operators</title>
+<sl>
+<sli><b><xref href="op$com.ibm.streamsx.sparkmllib.regression$SparkIsotonicRegression.xml">SparkIsotonicRegression</xref></b>: This operator provides support for analysis of incoming tuple data against Apache Spark's isotonic regression machine learning library.
+</sli>
+<sli><b><xref href="op$com.ibm.streamsx.sparkmllib.regression$SparkLinearRegression.xml">SparkLinearRegression</xref></b>: This operator provides support for analysis of incoming tuple data against Apache Spark's linear regression machine learning library.
+</sli>
+<sli><b><xref href="op$com.ibm.streamsx.sparkmllib.regression$SparkLogisticRegression.xml">SparkLogisticRegression</xref></b>: This operator provides support for analysis of incoming tuple data against Apache Spark's logistic regression machine learning library.
+</sli>
+</sl>
+</section>
+</refbody>
+</reference>
+
