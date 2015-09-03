@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2015 International Business Machines Corporation
+ * All Rights Reserved
+ *******************************************************************************/
 package com.ibm.streamsx.sparkmllib.tree;
 
 import org.apache.spark.SparkContext;
