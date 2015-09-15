@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * Copyright (C) 2015 International Business Machines Corporation
+ * All Rights Reserved
+ *******************************************************************************/
 package com.ibm.streamsx.sparkmllib;
 
 import java.io.IOException;
@@ -5,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
@@ -24,6 +29,8 @@ import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
+import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.meta.CollectionType;
 import com.ibm.streams.operator.model.Libraries;
 import com.ibm.streams.operator.model.Parameter;
@@ -42,6 +49,15 @@ import com.ibm.streams.operator.model.SharedLoader;
 @Libraries({"impl/lib/streams-sparkmllib.jar","@SPARK_HOME@/lib/*"})
 public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 
+	
+	private static final String PACKAGE_NAME =  "com.ibm.streamsx.sparkmllib";
+	/**
+	 * Create a {@code Logger} specific to this class that will write to the SPL
+	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
+	 * {@code Logger}. The {@code Logger} uses a
+	 */
+	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + PACKAGE_NAME, "com.ibm.streamsx.sparkmllib.Messages");
+
 	private String modelPath;
 	private String masterString;
 	private JavaSparkContext javaContext;
@@ -49,7 +65,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 	private T model;
 	private Map<String, String> params;
 	
-	protected static final String ANALYSISRESULT_ATTRIBUTE = "analysisResult";
+	public static final String ANALYSISRESULT_ATTRIBUTE = "analysisResult";
 
 	public AbstractSparkMLlibOperator() {
 	}
@@ -66,7 +82,8 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 			
 			//check if the output attribute is present where the result will be stored
 			if(jsonAttr != null && jsonAttr.getType().getMetaType() != MetaType.RSTRING) {
-				checker.setInvalidContext("The control port must have an attribute of type 'rstring', found {0}", new Object[] {jsonAttr.getType()});
+				log.log(LogLevel.ERROR, "WRONG_TYPE", jsonAttr.getType());
+				checker.setInvalidContext();
 			}
 		}
 	}
@@ -86,7 +103,8 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 			
 			//check if the output attribute is present where the result will be stored
 			if(resultAttribute == null) {
-				checker.setInvalidContext("The operator requires an attribute called 'analysisResult' on the output port.", null);
+				log.log(LogLevel.ERROR, "MISSING_ATTRIBUTE", new Object[]{ ANALYSISRESULT_ATTRIBUTE});
+				checker.setInvalidContext();
 			}
 		}
 	}
@@ -116,7 +134,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 	}
 	
 	protected T getModel() {
-		return model;
+		return  model;
 	}
 	
 	protected abstract T loadModel(SparkContext sc, String modelPath);
@@ -129,22 +147,33 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 		//Create a new Spark Configuration. If a sparkMaster parameter value was not specified
 		//then use local as the master. Also, generate a unique app name based on the PE and operator Ids
 		//so that we can have multiple spark operators connect to the same master without conflict
-		SparkConf conf = new SparkConf().setMaster(masterString == null?"local":masterString)
-				.setAppName(getUniqueAppName(context));
-		
-		//set any params that are passed in
-		if(params != null) {
-			Set<String> keys = params.keySet();
-			for(String key: keys) {
-				conf.set(key, params.get(key));
+		try {
+			SparkConf conf = new SparkConf().setMaster(masterString == null?"local":masterString)
+					.setAppName(getUniqueAppName(context));
+			
+			//set any params that are passed in
+			if(params != null) {
+				Set<String> keys = params.keySet();
+				for(String key: keys) {
+					conf.set(key, params.get(key));
+				}
 			}
+			javaContext = new JavaSparkContext(conf);
+		} catch (Exception e1) {
+			log.log(LogLevel.ERROR, "INIT_ERROR", new Object[]{context.getLogicalName(),e1.getMessage()});
+			throw e1;
 		}
-		javaContext = new JavaSparkContext(conf);
 		
 		//Load the model. Each derived class will perform the load that includes
 		//reading the model data from the path specified. The path could be
 		//any value supported by Spark's load API including filesystem, HDFS.
-		model = loadModel(javaContext.sc(), modelPath);
+		try {
+			log.log(LogLevel.INFO,"LOAD_MODEL_INIT", new Object[]{ modelPath});
+			model = loadModel(javaContext.sc(), modelPath);
+		} catch (Exception e) {
+			log.log(LogLevel.ERROR, "LOAD_MODEL_EXCEPTION", new Object[]{ modelPath});
+			throw e;
+		}
 	}
 	
 	
@@ -172,7 +201,9 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 					model = loadModel(javaContext.sc(), modelPath);
 				}
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.log(LogLevel.ERROR, "CONTROL_PORT_ERROR", e);
 		}
 	}
 	

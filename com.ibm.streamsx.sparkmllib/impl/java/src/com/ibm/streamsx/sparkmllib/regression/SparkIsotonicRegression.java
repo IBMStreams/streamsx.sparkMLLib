@@ -1,12 +1,26 @@
+/*******************************************************************************
+ * Copyright (C) 2015 International Business Machines Corporation
+ * All Rights Reserved
+ *******************************************************************************/
 package com.ibm.streamsx.sparkmllib.regression;
+
+import java.util.logging.Logger;
 
 import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.regression.IsotonicRegressionModel;
 
+import com.ibm.streams.operator.Attribute;
+import com.ibm.streams.operator.OperatorContext;
 import com.ibm.streams.operator.OutputTuple;
+import com.ibm.streams.operator.StreamSchema;
 import com.ibm.streams.operator.StreamingInput;
 import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.TupleAttribute;
+import com.ibm.streams.operator.OperatorContext.ContextCheck;
+import com.ibm.streams.operator.Type.MetaType;
+import com.ibm.streams.operator.compile.OperatorContextChecker;
+import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.InputPorts;
 import com.ibm.streams.operator.model.OutputPortSet;
@@ -20,6 +34,13 @@ import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
 @OutputPortSet(cardinality=1,description="This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type float64")
 public class SparkIsotonicRegression extends AbstractSparkMLlibOperator<IsotonicRegressionModel> {
 
+	private static final String CLASS_NAME =  "com.ibm.streamsx.sparkmllib.regression.SparkIsotonicRegression";
+	/**
+	 * Create a {@code Logger} specific to this class that will write to the SPL
+	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
+	 * {@code Logger}. The {@code Logger} uses a
+	 */
+	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + CLASS_NAME, "com.ibm.streamsx.sparkmllib.Messages");
 	private TupleAttribute<Tuple, Double> testDataAttr;
 	
 	@Parameter(optional=false, description="The attribute of type float64 on the input schema to be used as the input to the spark model.")
@@ -27,31 +48,49 @@ public class SparkIsotonicRegression extends AbstractSparkMLlibOperator<Isotonic
 		testDataAttr = attr;
 	}
 	
+	@ContextCheck (compile  = true)
+	public static void checkOutputAttributeType(OperatorContextChecker checker) {
+		OperatorContext context = checker.getOperatorContext();
+
+		StreamSchema schema = context.getStreamingOutputs().get(0).getStreamSchema();
+		Attribute resultAttribute = schema.getAttribute(ANALYSISRESULT_ATTRIBUTE);
+		
+		if(resultAttribute != null && resultAttribute.getType().getMetaType() != MetaType.FLOAT64) {
+			log.log(LogLevel.ERROR, "WRONG_TYPE_FULL", new Object[]{ANALYSISRESULT_ATTRIBUTE, "float64", resultAttribute.getType()});
+			checker.setInvalidContext();
+		}
+	}
+
+	
 	@Override
 	protected IsotonicRegressionModel loadModel(SparkContext sc, String modelPath) {
 		return IsotonicRegressionModel.load(sc, modelPath);
 	}
-	
+
 	@Override
 	public void processTuple(StreamingInput<Tuple> stream, Tuple tuple)
 			throws Exception {
 		//For each incoming tuple, extract the testDataAttr attribute value as a double
-		Double value = testDataAttr.getValue(tuple);
-		
-		//perform the specific operation using the specific model
-		double result = getModel().predict(value);
-		
-		//Generate an output tuple
-		OutputTuple out = getOutput(0).newTuple();
-		
-		//Pass all incoming attributes as is to the output tuple
-		out.assign(tuple);
-		
-		//Add the result value
-		out.setDouble(ANALYSISRESULT_ATTRIBUTE, result);
-		
-		//Submit to the output port
-		getOutput(0).submit(out);
+		try {	
+			Double value = testDataAttr.getValue(tuple);
+
+			//perform the specific operation using the specific model
+			double result = getModel().predict(value);
+
+			//Generate an output tuple
+			OutputTuple out = getOutput(0).newTuple();
+
+			//Pass all incoming attributes as is to the output tuple
+			out.assign(tuple);
+
+			//Add the result value
+			out.setDouble(ANALYSISRESULT_ATTRIBUTE, result);
+
+			//Submit to the output port
+			getOutput(0).submit(out);
+		} catch (Exception e){
+			log.log(LogLevel.ERROR, "PROCESS_TUPLE", new Object[]{e.getClass().getName(),e.getMessage()});
+		}
+
 	}
-	
 }

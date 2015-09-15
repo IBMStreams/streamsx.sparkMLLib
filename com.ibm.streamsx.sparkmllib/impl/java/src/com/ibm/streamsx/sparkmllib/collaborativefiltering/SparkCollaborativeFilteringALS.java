@@ -1,6 +1,11 @@
+/*******************************************************************************
+ * Copyright (C) 2015 International Business Machines Corporation
+ * All Rights Reserved
+ *******************************************************************************/
 package com.ibm.streamsx.sparkmllib.collaborativefiltering;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.recommendation.MatrixFactorizationModel;
@@ -16,6 +21,8 @@ import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.TupleAttribute;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
+import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.InputPorts;
 import com.ibm.streams.operator.model.OutputPortSet;
@@ -29,6 +36,14 @@ import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
 @OutputPortSet(cardinality=1,description="This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type list<float64> or float64 depending on the 'analysisType' parameter.")
 public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<MatrixFactorizationModel> {
 
+	
+	private static final String CLASS_NAME =  "com.ibm.streamsx.sparkmllib.collaborativefiltering.SparkCollaborativeFilteringALS";
+	/**
+	 * Create a {@code Logger} specific to this class that will write to the SPL
+	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
+	 * {@code Logger}. The {@code Logger} uses a
+	 */
+	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + CLASS_NAME, "com.ibm.streamsx.sparkmllib.Messages");
 	private TupleAttribute<Tuple, Integer> attr1;
 	private TupleAttribute<Tuple, Integer> attr2;
 	private AnalysisType analysisType;
@@ -67,11 +82,16 @@ public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<M
 		//make sure that the output attribute is the right type based on the type of analysis
 		String type = context.getParameterValues("analysisType").get(0);
 		
-		if(type.equals(AnalysisType.Prediction.name()) && resultAttribute.getType() != MetaType.FLOAT64) {
-			checker.setInvalidContext("Expected analysisResult attribute of type float64, found {0}", new Object[] {resultAttribute.getType()});
+		if(type.equals(AnalysisType.Prediction.name())) {
+			if( resultAttribute.getType().getMetaType() != MetaType.FLOAT64) {
+				log.log(LogLevel.ERROR, "WRONG_TYPE_ALS", new Object[]{"Prediction", "float64", resultAttribute.getType()});
+				checker.setInvalidContext();
+			}
 		}
 		else if(!isList(resultAttribute, Integer.class)) {
-			checker.setInvalidContext("Expected analysisResult attribute of type list<int32>, found {0}", new Object[] {resultAttribute.getType()});
+			log.log(LogLevel.ERROR, "WRONG_TYPE_ALS", new Object[]{type, "list<int32>", resultAttribute.getType()});
+
+			checker.setInvalidContext();
 		}
 	}
 
@@ -83,33 +103,35 @@ public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<M
 		
 		OutputTuple out = getOutput(0).newTuple();
 		out.assign(tuple);
-		
-		switch (analysisType) {
-		case Prediction:
-			double result = getModel().predict(val1, val2);		
-			out.setDouble(ANALYSISRESULT_ATTRIBUTE, result);
-			break;
-		case RecommendProducts: {
-			Rating[] ratings = getModel().recommendProducts(val1, val2);
-			ArrayList<Integer> products = new ArrayList<Integer>();
-			for(Rating r: ratings) {
-				products.add(r.product());
+		try {
+			switch (analysisType) {
+			case Prediction:
+				double result = getModel().predict(val1, val2);		
+				out.setDouble(ANALYSISRESULT_ATTRIBUTE, result);
+				break;
+			case RecommendProducts: {
+				Rating[] ratings = getModel().recommendProducts(val1, val2);
+				ArrayList<Integer> products = new ArrayList<Integer>();
+				for(Rating r: ratings) {
+					products.add(r.product());
+				}
+				out.setList(ANALYSISRESULT_ATTRIBUTE, products);
+				break;
 			}
-			out.setList(ANALYSISRESULT_ATTRIBUTE, products);
-			break;
-		}
-		case RecommendUsers:
-			Rating[] ratings = getModel().recommendUsers(val1, val2);
-			ArrayList<Integer> users = new ArrayList<Integer>();
-			for(Rating r: ratings) {
-				users.add(r.product());
+			case RecommendUsers:
+				Rating[] ratings = getModel().recommendUsers(val1, val2);
+				ArrayList<Integer> users = new ArrayList<Integer>();
+				for(Rating r: ratings) {
+					users.add(r.product());
+				}
+				out.setList(ANALYSISRESULT_ATTRIBUTE, users);
+				break;
 			}
-			out.setList(ANALYSISRESULT_ATTRIBUTE, users);
-			break;
-		}
-		
-		getOutput(0).submit(out);
-	}
 
+			getOutput(0).submit(out);
+	} catch (Exception e){
+		log.log(LogLevel.ERROR, "PROCESS_TUPLE", new Object[]{e.getClass().getName(),e.getMessage()});
+	}
+}
 	
 }
