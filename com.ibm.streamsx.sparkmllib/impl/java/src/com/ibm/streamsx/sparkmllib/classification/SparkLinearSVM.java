@@ -10,7 +10,6 @@ import org.apache.spark.mllib.linalg.Vector;
 
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
-import com.ibm.streams.operator.model.PrimitiveOperator;
 import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibListToDoubleOperator;
 
 //@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's SVM machine learning library.")

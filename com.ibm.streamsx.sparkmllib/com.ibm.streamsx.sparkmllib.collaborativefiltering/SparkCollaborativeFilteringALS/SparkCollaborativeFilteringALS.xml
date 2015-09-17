@@ -85,7 +85,7 @@
         <optional>false</optional>
       </inputPortSet>
       <inputPortSet>
-        <description>This input control port is optional. The port expects a single attribute of type rstring and the value must be a string in JSON format. For example, to reload the spark model, the attribute value must be set to '{"reloadModel":true}'.</description>
+        <description>This input control port is optional. The port expects a single attribute of type rstring and the value must be a string in JSON format. For example, to reload the spark model, the attribute value must be set to '\{"reloadModel":true\}'.</description>
         <windowingDescription/>
         <windowingMode>NonWindowed</windowingMode>
         <windowPunctuationInputMode>Oblivious</windowPunctuationInputMode>

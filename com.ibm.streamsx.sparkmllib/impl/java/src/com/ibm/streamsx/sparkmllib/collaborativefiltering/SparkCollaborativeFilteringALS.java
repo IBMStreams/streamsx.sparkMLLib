@@ -27,10 +27,9 @@ import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.InputPorts;
 import com.ibm.streams.operator.model.OutputPortSet;
 import com.ibm.streams.operator.model.Parameter;
-import com.ibm.streams.operator.model.PrimitiveOperator;
 import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
 
-@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's collaborative filtering machine learning library.")
+//@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's collaborative filtering machine learning library.")
 @InputPorts({@InputPortSet(cardinality=1,description="This input port is required. The operator expects 2 attributes of type int32 that will be used as input to the collaborative filtering algorithm."),
 			 @InputPortSet(cardinality=1,optional=true,controlPort=true,description="This input control port is optional. The port expects a single attribute of type rstring and the value must be a string in JSON format. For example, to reload the spark model, the attribute value must be set to '{\\\"reloadModel\\\":true}'.")})
 @OutputPortSet(cardinality=1,description="This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type list<float64> or float64 depending on the 'analysisType' parameter.")
