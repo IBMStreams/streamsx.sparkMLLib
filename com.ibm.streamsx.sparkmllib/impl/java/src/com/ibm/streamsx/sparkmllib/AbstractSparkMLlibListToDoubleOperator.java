@@ -53,7 +53,7 @@ public abstract class AbstractSparkMLlibListToDoubleOperator<T> extends Abstract
 		Attribute resultAttribute = schema.getAttribute(ANALYSISRESULT_ATTRIBUTE);
 		
 		if(resultAttribute != null && resultAttribute.getType().getMetaType() != MetaType.FLOAT64) {
-			log.log(LogLevel.ERROR, "ATTR_MISMATCH", resultAttribute.getType());
+			log.log(LogLevel.ERROR, "WRONG_TYPE_FULL", new Object[]{ANALYSISRESULT_ATTRIBUTE, "float64", resultAttribute.getType()});
 			checker.setInvalidContext();
 		}
 	}
