@@ -20,7 +20,7 @@ import com.ibm.streams.operator.StreamingInput;
 import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
-import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.TraceLevel;
 import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
@@ -40,7 +40,7 @@ public class SparkClusteringKMeans extends AbstractSparkMLlibOperator<KMeansMode
 	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
 	 * {@code Logger}. The {@code Logger} uses a
 	 */
-	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + CLASS_NAME, "com.ibm.streamsx.sparkmllib.Messages");
+	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + CLASS_NAME, "com.ibm.streamsx.sparkmllib.messages");
 
 	/**
 	 * Check to ensure that an analysisResult attribute of type int32 is present on the output schema
@@ -53,7 +53,7 @@ public class SparkClusteringKMeans extends AbstractSparkMLlibOperator<KMeansMode
 		Attribute resultAttribute = schema.getAttribute(ANALYSISRESULT_ATTRIBUTE);
 		
 		if(resultAttribute != null && resultAttribute.getType().getMetaType() != MetaType.INT32) {
-			log.log(LogLevel.ERROR, "WRONG_TYPE_FULL", new Object[]{ANALYSISRESULT_ATTRIBUTE, "int32", resultAttribute.getType()});
+			log.log(TraceLevel.ERROR, "WRONG_TYPE_FULL", new Object[]{ANALYSISRESULT_ATTRIBUTE, "int32", resultAttribute.getType()});
 			checker.setInvalidContext();
 		}
 	}
@@ -99,7 +99,7 @@ public class SparkClusteringKMeans extends AbstractSparkMLlibOperator<KMeansMode
 			getOutput(0).submit(out);
 
 		} catch (Exception e){
-			log.log(LogLevel.ERROR, "PROCESS_TUPLE", new Object[]{e.getClass().getName(),e.getMessage()});
+			log.log(TraceLevel.ERROR, "PROCESS_TUPLE", new Object[]{e.getClass().getName(),e.getMessage()});
 		}
 	}
 }

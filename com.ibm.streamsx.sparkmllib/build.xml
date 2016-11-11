@@ -56,14 +56,14 @@
 		</exec>
 	</target>
 	
-	   <target name="toolkit" depends="jar">
-	         <echo message="Tookit to index: ${basedir}"/>
-	         <exec executable="${spl-mt}">
-	             <arg value="--directory"/>
-	             <arg value="${basedir}"/>
-	             <arg value="-m"/>
-	         </exec>
-	     </target>
+	<target name="toolkit" depends="jar">
+		<echo message="Tookit to index: ${basedir}"/>
+		<exec executable="${spl-mt}">
+			<arg value="--directory"/>
+			<arg value="${basedir}"/>
+			<arg value="-m"/>
+		</exec>
+	</target>
 	
 	<!-- Downloads libraries using maven -->
 	<target name="maven-deps">
