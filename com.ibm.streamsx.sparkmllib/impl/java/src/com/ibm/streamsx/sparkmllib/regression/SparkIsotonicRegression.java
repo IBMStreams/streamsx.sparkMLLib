@@ -38,7 +38,7 @@ public class SparkIsotonicRegression extends AbstractSparkMLlibOperator<Isotonic
 	 * Create a {@code Logger} specific to this class that will write to the SPL
 	 * trace facility
 	 */
-	private static Logger tracer = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + CLASS_NAME, "com.ibm.streamsx.sparkmllib.messages");
+	private static Logger tracer = Logger.getLogger(CLASS_NAME, "com.ibm.streamsx.sparkmllib.messages");
 	private TupleAttribute<Tuple, Double> testDataAttr;
 	
 	@Parameter(optional=false, description="The attribute of type float64 on the input schema to be used as the input to the spark model.")
