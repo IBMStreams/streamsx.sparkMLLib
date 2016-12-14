@@ -28,7 +28,7 @@ import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
-import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.TraceLevel;
 import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.meta.CollectionType;
 import com.ibm.streams.operator.model.Libraries;
@@ -49,13 +49,12 @@ import com.ibm.streams.operator.model.SharedLoader;
 public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 
 	
-	private static final String PACKAGE_NAME =  "com.ibm.streamsx.sparkmllib";
+	private static final String CLASS_NAME =  AbstractSparkMLlibOperator.class.getName();
 	/**
 	 * Create a {@code Logger} specific to this class that will write to the SPL
-	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
-	 * {@code Logger}. The {@code Logger} uses a
+	 * trace facility
 	 */
-	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + PACKAGE_NAME, "com.ibm.streamsx.sparkmllib.Messages");
+	private static Logger tracer = Logger.getLogger(CLASS_NAME, "com.ibm.streamsx.sparkmllib.messages");
 
 	private String modelPath;
 	private String masterString;
@@ -81,7 +80,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 			
 			//check if the output attribute is present where the result will be stored
 			if(jsonAttr != null && jsonAttr.getType().getMetaType() != MetaType.RSTRING) {
-				log.log(LogLevel.ERROR, "WRONG_TYPE", jsonAttr.getType());
+				tracer.log(TraceLevel.ERROR, "COMPILE_M_WRONG_TYPE", jsonAttr.getType());
 				checker.setInvalidContext();
 			}
 		}
@@ -102,7 +101,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 			
 			//check if the output attribute is present where the result will be stored
 			if(resultAttribute == null) {
-				log.log(LogLevel.ERROR, "MISSING_ATTRIBUTE", new Object[]{ ANALYSISRESULT_ATTRIBUTE});
+				tracer.log(TraceLevel.ERROR, "COMPILE_M_MISSING_ATTRIBUTE", new Object[]{ ANALYSISRESULT_ATTRIBUTE});
 				checker.setInvalidContext();
 			}
 		}
@@ -159,7 +158,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 			}
 			javaContext = new JavaSparkContext(conf);
 		} catch (Exception e1) {
-			log.log(LogLevel.ERROR, "INIT_ERROR", new Object[]{context.getLogicalName(),e1.getMessage()});
+			tracer.log(TraceLevel.ERROR, "TRACE_M_INIT_ERROR", new Object[]{context.getLogicalName(),e1.getMessage()});
 			throw e1;
 		}
 		
@@ -167,10 +166,10 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 		//reading the model data from the path specified. The path could be
 		//any value supported by Spark's load API including filesystem, HDFS.
 		try {
-			log.log(LogLevel.INFO,"LOAD_MODEL_INIT", new Object[]{ modelPath});
+			tracer.log(TraceLevel.INFO,"TRACE_M_LOAD_MODEL_INIT", new Object[]{modelPath});
 			model = loadModel(javaContext.sc(), modelPath);
 		} catch (Exception e) {
-			log.log(LogLevel.ERROR, "LOAD_MODEL_EXCEPTION", new Object[]{ modelPath});
+			tracer.log(TraceLevel.ERROR, "TRACE_M_LOAD_MODEL_EXCEPTION", new Object[]{modelPath, e.getMessage()});
 			throw e;
 		}
 	}
@@ -202,7 +201,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.log(LogLevel.ERROR, "CONTROL_PORT_ERROR", e);
+			tracer.log(TraceLevel.ERROR, "TRACE_M_CONTROL_PORT_ERROR", new Object[]{e.getMessage()});
 		}
 	}
 	

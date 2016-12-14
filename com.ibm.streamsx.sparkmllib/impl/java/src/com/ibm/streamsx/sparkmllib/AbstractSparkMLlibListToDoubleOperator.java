@@ -18,7 +18,7 @@ import com.ibm.streams.operator.StreamingInput;
 import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
-import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.TraceLevel;
 import com.ibm.streams.operator.logging.LoggerNames;
 
 /**
@@ -31,15 +31,13 @@ public abstract class AbstractSparkMLlibListToDoubleOperator<T> extends Abstract
 	protected Attribute testDataAttr;
 	
 
-	private static final String PKG_NAME = "com.ibm.streamsx.sparkmllib";
+	private static final String CLASS_NAME = AbstractSparkMLlibListToDoubleOperator.class.getName();
 	
 	/**
 	 * Create a {@code Logger} specific to this class that will write to the SPL
-	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
-	 * {@code Logger}. The {@code Logger} uses a
+	 * trace facility
 	 */
-	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "."
-			+ PKG_NAME, "com.ibm.streamsx.sparkmllib.Messages");
+	private static Logger tracer = Logger.getLogger(CLASS_NAME, "com.ibm.streamsx.sparkmllib.messages");
 
 	
 	/**
@@ -53,7 +51,7 @@ public abstract class AbstractSparkMLlibListToDoubleOperator<T> extends Abstract
 		Attribute resultAttribute = schema.getAttribute(ANALYSISRESULT_ATTRIBUTE);
 		
 		if(resultAttribute != null && resultAttribute.getType().getMetaType() != MetaType.FLOAT64) {
-			log.log(LogLevel.ERROR, "WRONG_TYPE_FULL", new Object[]{ANALYSISRESULT_ATTRIBUTE, "float64", resultAttribute.getType()});
+			tracer.log(TraceLevel.ERROR, "COMPILE_M_WRONG_TYPE_FULL", new Object[]{ANALYSISRESULT_ATTRIBUTE, "float64", resultAttribute.getType()});
 			checker.setInvalidContext();
 		}
 	}
@@ -94,7 +92,7 @@ public abstract class AbstractSparkMLlibListToDoubleOperator<T> extends Abstract
 			//Submit to the output port
 			getOutput(0).submit(out);
 		} catch (Exception e){
-			log.log(LogLevel.ERROR, "PROCESS_TUPLE", new Object[]{e.getClass().getName(), e.getMessage()});
+			tracer.log(TraceLevel.ERROR, "TRACE_M_PROCESS_TUPLE", new String[]{e.getClass().getName(), e.getMessage()});
 		}
 	}
 	/**

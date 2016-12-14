@@ -21,7 +21,7 @@ import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.TupleAttribute;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
-import com.ibm.streams.operator.logging.LogLevel;
+import com.ibm.streams.operator.logging.TraceLevel;
 import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.InputPorts;
@@ -37,13 +37,12 @@ import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
 public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<MatrixFactorizationModel> {
 
 	
-	private static final String CLASS_NAME =  "com.ibm.streamsx.sparkmllib.collaborativefiltering.SparkCollaborativeFilteringALS";
+	private static final String CLASS_NAME = SparkCollaborativeFilteringALS.class.getName();
 	/**
 	 * Create a {@code Logger} specific to this class that will write to the SPL
-	 * log facility as a child of the {@link LoggerNames#LOG_FACILITY}
-	 * {@code Logger}. The {@code Logger} uses a
+	 * trace facility
 	 */
-	private static Logger log = Logger.getLogger(LoggerNames.LOG_FACILITY + "." + CLASS_NAME, "com.ibm.streamsx.sparkmllib.Messages");
+	private static Logger tracer = Logger.getLogger(CLASS_NAME, "com.ibm.streamsx.sparkmllib.messages");
 	private TupleAttribute<Tuple, Integer> attr1;
 	private TupleAttribute<Tuple, Integer> attr2;
 	private AnalysisType analysisType;
@@ -84,13 +83,12 @@ public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<M
 		
 		if(type.equals(AnalysisType.Prediction.name())) {
 			if( resultAttribute.getType().getMetaType() != MetaType.FLOAT64) {
-				log.log(LogLevel.ERROR, "WRONG_TYPE_ALS", new Object[]{"Prediction", "float64", resultAttribute.getType()});
+				tracer.log(TraceLevel.ERROR, "TRACE_M_WRONG_TYPE_ALS", new Object[]{"Prediction", "float64", resultAttribute.getType()});
 				checker.setInvalidContext();
 			}
 		}
 		else if(!isList(resultAttribute, Integer.class)) {
-			log.log(LogLevel.ERROR, "WRONG_TYPE_ALS", new Object[]{type, "list<int32>", resultAttribute.getType()});
-
+			tracer.log(TraceLevel.ERROR, "TRACE_M_WRONG_TYPE_ALS", new Object[]{type, "list<int32>", resultAttribute.getType()});
 			checker.setInvalidContext();
 		}
 	}
@@ -106,7 +104,7 @@ public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<M
 		try {
 			switch (analysisType) {
 			case Prediction:
-				double result = getModel().predict(val1, val2);		
+				double result = getModel().predict(val1, val2);
 				out.setDouble(ANALYSISRESULT_ATTRIBUTE, result);
 				break;
 			case RecommendProducts: {
@@ -130,8 +128,8 @@ public class SparkCollaborativeFilteringALS extends AbstractSparkMLlibOperator<M
 
 			getOutput(0).submit(out);
 	} catch (Exception e){
-		log.log(LogLevel.ERROR, "PROCESS_TUPLE", new Object[]{e.getClass().getName(),e.getMessage()});
+		tracer.log(TraceLevel.ERROR, "TRACE_M_PROCESS_TUPLE", new String[]{e.getClass().getName(),e.getMessage()});
 	}
 }
-	
+
 }
