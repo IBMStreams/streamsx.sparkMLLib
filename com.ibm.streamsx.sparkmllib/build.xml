@@ -90,6 +90,6 @@
 	<target name="jar" depends="compile, copy">
 		<jar destfile="${impl.lib.dir}/${jarfile}" basedir="${build.dir}" includes="com/ibm/streamsx/sparkmllib/**" filesonly="true">
 		</jar>
-		<delete dir="${build.dir}" />
+		<!-- <delete dir="${build.dir}" /> -->
 	</target>
 </project>

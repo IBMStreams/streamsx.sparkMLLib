@@ -1,1 +1,12 @@
+#artefacts commonly ignored
+toolkit.xml
+.toolkitList
+output/
+lib/
+/**/impl/java/bin/
+/**/impl/java/lib/
+/**/impl/java/src-gen/
+.apt_generated/
+
+#ignored in this directory
 /.project

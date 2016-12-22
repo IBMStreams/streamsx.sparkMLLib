@@ -8,15 +8,15 @@ composite Main
 		(stream<float64 x, float64 y> FileSource_3_out0) as FileSource_3 = FileSource()
 		{
 			param
-				file : "random_2d.csv" ;
+				file : dataDirectory() + "/random_2d.csv" ;
 		}
 
- 		(stream<int32 analysisResult> SparkClusteringKMeans_3_out0) as
+		(stream<int32 analysisResult> SparkClusteringKMeans_3_out0) as
 			SparkClusteringKMeans_3 = SparkClusteringKMeans(Functor_4_out0)
 		{
 			param
 				testDataAttr : testData ;
-				modelPath : "/some/path/kmeans_model" ;
+				modelPath : getApplicationDir() + "/etc/kmeans_model" ;
 		}
 
 		(stream<list<float64> testData> Functor_4_out0) as Functor_4 =
@@ -29,7 +29,7 @@ composite Main
 		() as FileSink_5 = FileSink(SparkClusteringKMeans_3_out0)
 		{
 			param
-				file : "output.txt" ;
+				file : dataDirectory() + "/output.txt" ;
 				flush:1u;
 		}
 }

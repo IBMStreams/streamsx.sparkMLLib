@@ -14,7 +14,7 @@ public class JavaTrainingApplication {
 		SparkConf conf = new SparkConf().setMaster("local").setAppName("SparkStreamsSampleTrainingApplication");
 		JavaSparkContext jsc = new JavaSparkContext(conf);
 		
-		JavaRDD<String> lines = jsc.textFile("random_2d_training.csv");
+		JavaRDD<String> lines = jsc.textFile("data/random_2d_training.csv");
 		JavaRDD<Vector> parsedData = lines.map(
 	      new Function<String, Vector>() {
 			@Override
@@ -33,7 +33,7 @@ public class JavaTrainingApplication {
 	    int numClusters = 10;
 	    int numIterations = 20;
 	    KMeansModel clusters = KMeans.train(parsedData.rdd(), numClusters, numIterations);
-	    clusters.save(jsc.sc(), "/some/path/kmeans_model");
+	    clusters.save(jsc.sc(), "etc/kmeans_model");
 	    jsc.close();
 	}
 }
