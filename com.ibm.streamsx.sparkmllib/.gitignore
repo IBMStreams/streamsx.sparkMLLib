@@ -1,5 +1,5 @@
-/.toolkitList
-/output/
 /.settings/
-/toolkit.xml
 /doc/
+
+#The generated operator xml files
+/com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS/SparkCollaborativeFilteringALS.xml
