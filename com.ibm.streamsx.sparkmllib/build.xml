@@ -30,6 +30,7 @@
 		<delete dir="${test.run.dir}" />
 		<delete dir="${test.build.dir}" />
 		<delete dir="${gensrc.dir}" />
+		<!-- <delete dir="com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS" /> -->
 	</target>
 	<path id="cp.streams">
 		<pathelement location="${streams.install}/lib/com.ibm.streams.operator.samples.jar" />
@@ -80,16 +81,11 @@
 			<compilerarg line="-s ${gensrc.dir}" />
 		</javac>
 	</target>
-	<target name="copy">
-		<copy todir="${build.dir}">
-			<fileset dir="${src.dir}">
-				<exclude name="**/*.java" />
-			</fileset>
-		</copy>
-	</target>
-	<target name="jar" depends="compile, copy">
-		<jar destfile="${impl.lib.dir}/${jarfile}" basedir="${build.dir}" includes="com/ibm/streamsx/sparkmllib/**" filesonly="true">
+	<target name="jar" depends="compile">
+		<jar destfile="${impl.lib.dir}/${jarfile}" filesonly="true">
+			<fileset dir="${build.dir}" includes="com/ibm/streamsx/sparkmllib/**"/>
+			<fileset dir="${src.dir}" includes="com/ibm/streamsx/sparkmllib/*.properties"/>
 		</jar>
-		<!-- <delete dir="${build.dir}" /> -->
+		<delete dir="${build.dir}" />
 	</target>
 </project>
