@@ -7,6 +7,3 @@ lib/
 /**/impl/java/lib/
 /**/impl/java/src-gen/
 .apt_generated/
-
-#ignored in this directory
-/.project
