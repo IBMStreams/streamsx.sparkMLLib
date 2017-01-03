@@ -2,7 +2,18 @@
 <info:toolkitInfoModel xmlns:common="http://www.ibm.com/xmlns/prod/streams/spl/common" xmlns:info="http://www.ibm.com/xmlns/prod/streams/spl/toolkitInfo">
   <info:identity>
     <info:name>KMeansSample</info:name>
-    <info:description></info:description>
+    <info:description>
+        Sample application with SparkClusteringKMeans operator
+        
+        This sample demonstrates the usage the Apache Spark's kmeans clustering machine learning library in a streams application. 
+        The SparkClusteringKMeans operator requires at start up the Spark model which is provided in directory etc/kmeans_model.
+        A java application is provided in impl/src directory. This application can be used to rebuild the Spark model.
+        Steps to build the JavaTrainingApplication:
+        * clone or download the source code of the streamsx.sparkMLLib toolkit from github
+        * execute `ant all` from you local repository
+        * import KMeansSample project into StreamsStudio
+        * execute a StreamsStudio build
+    </info:description>
     <info:version>1.0.0</info:version>
     <info:requiredProductVersion>4.0.1.0</info:requiredProductVersion>
   </info:identity>
