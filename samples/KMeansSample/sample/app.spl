@@ -2,7 +2,14 @@ namespace sample;
 
 use com.ibm.streamsx.sparkmllib.clustering::SparkClusteringKMeans ;
 
-composite Main
+/**
+ * This sample demonstrates the use of operator SparkClusteringKMeans
+ * 
+ * On initialization, the operator will load the Spark model.
+ * Each incoming tuple from file data/random_2d.csv is used for analysis against Apache Spark's kmeans clustering machine 
+ * learning library. The analysis result will be passed to the output stream and stored in file data/output.txt.
+ */
+public composite Main
 {
 	graph
 		(stream<float64 x, float64 y> FileSource_3_out0) as FileSource_3 = FileSource()

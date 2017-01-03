@@ -1,5 +1,4 @@
 /.settings/
-/doc/
 
 #The generated operator xml files
 /com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS/SparkCollaborativeFilteringALS.xml

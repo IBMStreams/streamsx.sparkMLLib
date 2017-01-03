@@ -1,9 +1,17 @@
-#artefacts commonly ignored
+#artifacts commonly ignored in all directories
 toolkit.xml
-.toolkitList
+
+#matches for ignored directories in all directories
 output/
 lib/
-/**/impl/java/bin/
-/**/impl/java/lib/
-/**/impl/java/src-gen/
+tmp/
+
+#matches for ignored directories in all directories (multiple components)
+**/impl/java/bin/
+**/impl/java/lib/
+**/impl/java/src-gen/
+**/doc/spldoc/
+
+#Streams Studio generated artifacts to ignore
+.toolkitList
 .apt_generated/
