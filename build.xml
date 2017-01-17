@@ -1,37 +1,31 @@
 
-<project name="streamsx.sparkmllib" default="all" basedir=".">
-	<description>
-        Build file for streamsx.sparkmllib project, built the toolkits.
-    </description>
+<project name="streamsx.sparkmllib" default="all">
+	<description>Build file for streamsx.sparkmllib project, built the toolkits.</description>
+	
 	<!-- set global properties for this build -->
 	<property environment="env" />
 	<property name="streams.install" value="${env.STREAMS_INSTALL}" />
-	<property name="toolkit" location="com.ibm.streamsx.sparkmllib" />
-	<property name="toolkit.test" location="tests" />
-	<property name="tmp" location="tmp" />
+	<property name="toolkit"         location="com.ibm.streamsx.sparkmllib" />
+	<property name="toolkit.test"    location="tests" />
+	<property name="tmp"             location="tmp" />
 
-	<target name="all" depends="toolkit" />
+	<target name="all" depends="toolkit" description="Build all artifacts - incremental build"/>
 
 	<target name="setcommitversion">
 		<!-- Create the time stamp -->
 		<tstamp />
-
 		<!-- Extract the git commit hash -->
 		<exec executable="git" outputproperty="commithash">
 			<arg value="rev-parse" />
 			<arg value="--short" />
 			<arg value="HEAD" />
 		</exec>
-
 		<!-- Update the info.xml -->
 		<replace file="${toolkit}/info.xml" token="__dev__" value="commit_${commithash}" summary="yes" />
-
 		<!-- Extract info from the toolkit's info.xml -->
 		<xmlproperty file="${toolkit}/info.xml" prefix="tkinfo" keepRoot="no" />
-
 		<echo message="Toolkit Version: ${tkinfo.info:identity.info:version}" />
 		<echo message="Git Hash: ${commithash}" />
-
 	</target>
 
 	<target name="revertversion">
@@ -42,17 +36,17 @@
 		</exec>
 	</target>
 
-	<target name="clean" description="clean up">
+	<target name="clean" description="Clean all generated and downloaded files">
 		<ant dir="${toolkit}" target="clean" />
 		<delete dir="${tmp}" />
 	</target>
 
-	<target name="toolkit" description="Build any code and index the toolkit.">
+	<target name="toolkit" description="Build toolkit code and index the toolkit.">
 		<ant dir="${toolkit}" target="all" />
 	</target>
 	
 	<target name="toolkitIndexOnly" description="Index the toolkit.">
-		<ant dir="${toolkit}" target="toolkit" />
+		<ant dir="${toolkit}" target="toolkit-index" />
 	</target>
 
 	<target name="spldoc" depends="spldoc_work, revertversion" />
@@ -102,7 +96,7 @@
 	</target>
 
 	<!-- Targets to build releases -->
-	<target name="release" depends="clean, all, spldoc, toolkitIndexOnly">		
+	<target name="release" depends="clean, all, spldoc, toolkitIndexOnly" description="Make a toolkit release archive">
 		<mkdir dir="${tmp}" />
 		<property name="releasefilename" value="${tmp}/streamsx.sparkmllib.toolkits-${tkinfo.info:identity.info:version}-${DSTAMP}-${TSTAMP}.tgz" />
 		<tar compression="gzip" longfile="gnu"

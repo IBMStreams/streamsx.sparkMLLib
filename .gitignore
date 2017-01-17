@@ -5,11 +5,13 @@ toolkit.xml
 output/
 lib/
 tmp/
+downloaded/
 
 #matches for ignored directories in all directories (multiple components)
 **/impl/java/bin/
 **/impl/java/lib/
 **/impl/java/src-gen/
+**/impl/java/build
 **/doc/spldoc/
 
 #Streams Studio generated artifacts to ignore
