@@ -1,7 +1,7 @@
 # Copyright (C) 2016, International Business Machines Corporation. 
 # All Rights Reserved.
 
-.PHONY: all distributed standalone clean
+.PHONY: all distributed standalone clean build
 
 ifeq ($(STREAMS_INSTALL),)
     $(error error: environment variable STREAMS_INSTALL has to be set)
@@ -16,6 +16,8 @@ SPL_MAIN_COMPOSITE = sample::Main
 DATA_DIR=./data
 
 all: clean distributed
+
+build: distributed
 
 distributed:
 	$(SPLC) $(SPLC_FLAGS) -M $(SPL_MAIN_COMPOSITE) --data-directory $(DATA_DIR) $(SPL_CMD_ARGS)

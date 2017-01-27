@@ -14,6 +14,9 @@ downloaded/
 **/impl/java/build
 **/doc/spldoc/
 
+#ignored only here
+/release/
+
 #Streams Studio generated artifacts to ignore
 .toolkitList
 .apt_generated/
