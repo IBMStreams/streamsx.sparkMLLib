@@ -27,7 +27,7 @@
 	
 	<!-- these targets are here due to compatibility -->
 	<target name="all"   depends="toolkit"                    description="Build all toolkit artifacts - incremental build"/>
-	<target name="clean" depends="toolkit-clean,spldoc-clean" description="Clean all generated and downloaded toolkit files, clean the documentation"/>
+	<target name="clean" depends="toolkit-clean,spldoc-clean" description="Clean all generated and downloaded toolkit files, clean samples and clean the documentation"/>
 
 	<!-- Merge the commit hash into toolkit version number -->
 	<target name="setcommitversion">
@@ -48,11 +48,11 @@
 		</exec>
 	</target>
 
-	<target name="toolkit" description="Build toolkit code and index the toolkit.">
+	<target name="toolkit" description="Build toolkit code and index the toolkit - incremental build.">
 		<ant dir="${toolkit.dir}" target="all" />
 	</target>
 	
-	<target name="toolkit-clean" depends="samples-clean" description="Clean all generated and downloaded toolkit files">
+	<target name="toolkit-clean" depends="samples-clean" description="Clean all generated and downloaded toolkit files and cleans samples">
 		<ant dir="${toolkit.dir}" target="clean" />
 		<delete dir="${tmp}" />
 	</target>
@@ -85,8 +85,8 @@
 	</target>
 	
 	<!-- Test targets -->
-	<target name="test" depends="toolkit"
-		description="Execute the toolkit test">
+	<target name="test"
+		description="Execute the toolkit test. Requires an up to date toolkit build">
 		<!-- <ant dir="${toolkit.test}" target="all" /> -->
 		<echo message="Check if toolkit is compile clean"/>
 		<antcall target="samples"/>
@@ -94,8 +94,8 @@
 
 
 	<!-- Targets called on samples -->
-	<target name="samples" depends="toolkit"
-		description="Build all samples">
+	<target name="samples"
+		description="Build all samples. Requires an up to date toolkit build">
 		<subant target="samplebuild" genericantfile="${basedir}/build.xml" failonerror="true">
 			<dirset dir="samples" includes="*"/>
 		</subant>
