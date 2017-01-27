@@ -1,111 +1,147 @@
 
-<project name="streamsx.sparkmllib" default="all">
+<project name="streamsx.sparkMLLib" default="all">
 	<description>Build file for streamsx.sparkmllib project, built the toolkits.</description>
 	
-	<!-- set global properties for this build -->
+	<!-- check streams install -->
 	<property environment="env" />
-	<property name="streams.install" value="${env.STREAMS_INSTALL}" />
-	<property name="toolkit"         location="com.ibm.streamsx.sparkmllib" />
+	<!-- Exit if there is a bad value in streams.install -->
+	<fail unless="env.STREAMS_INSTALL" message="No streams installation found. Exiting!"/>
+	<!-- set global properties for this build -->
+	<property name="toolkit.dir"     location="com.ibm.streamsx.sparkmllib" />
 	<property name="toolkit.test"    location="tests" />
-	<property name="tmp"             location="tmp" />
+	<property name="toolkit.doc"     location="doc/spldoc" />
+	<property name="toolkit.samples.dir" location="samples" />
+	<property name="spl-mt"          value="${env.STREAMS_INSTALL}/bin/spl-make-toolkit"/>
+	<property name="spl-md"          value="${env.STREAMS_INSTALL}/bin/spl-make-doc"/>
+	<property name="release.dir"     location="release"/>
 
-	<target name="all" depends="toolkit" description="Build all artifacts - incremental build"/>
+	<!-- Create the time stamp -->
+	<tstamp/>
 
+	<!-- Extract the git commit hash -->
+	<exec executable="git" outputproperty="commithash">
+		<arg value="rev-parse" />
+		<arg value="--short" />
+		<arg value="HEAD" />
+	</exec>
+	
+	<!-- these targets are here due to compatibility -->
+	<target name="all"   depends="toolkit"                    description="Build all toolkit artifacts - incremental build"/>
+	<target name="clean" depends="toolkit-clean,spldoc-clean" description="Clean all generated and downloaded toolkit files, clean the documentation"/>
+
+	<!-- Merge the commit hash into toolkit version number -->
 	<target name="setcommitversion">
-		<!-- Create the time stamp -->
-		<tstamp />
-		<!-- Extract the git commit hash -->
-		<exec executable="git" outputproperty="commithash">
-			<arg value="rev-parse" />
-			<arg value="--short" />
-			<arg value="HEAD" />
-		</exec>
 		<!-- Update the info.xml -->
-		<replace file="${toolkit}/info.xml" token="__dev__" value="commit_${commithash}" summary="yes" />
+		<replace file="${toolkit.dir}/info.xml" token="__dev__" value="commit_${commithash}" summary="yes" />
 		<!-- Extract info from the toolkit's info.xml -->
-		<xmlproperty file="${toolkit}/info.xml" prefix="tkinfo" keepRoot="no" />
+		<xmlproperty file="${toolkit.dir}/info.xml" prefix="tkinfo" keepRoot="no" />
 		<echo message="Toolkit Version: ${tkinfo.info:identity.info:version}" />
 		<echo message="Git Hash: ${commithash}" />
 	</target>
 
+	<!-- Revert setcommitversion -->
 	<target name="revertversion">
 		<exec executable="git">
 			<arg value="checkout" />
 			<arg value="--" />
-			<arg value="${toolkit}/info.xml" />
+			<arg value="${toolkit.dir}/info.xml" />
 		</exec>
 	</target>
 
-	<target name="clean" description="Clean all generated and downloaded files">
-		<ant dir="${toolkit}" target="clean" />
+	<target name="toolkit" description="Build toolkit code and index the toolkit.">
+		<ant dir="${toolkit.dir}" target="all" />
+	</target>
+	
+	<target name="toolkit-clean" depends="samples-clean" description="Clean all generated and downloaded toolkit files">
+		<ant dir="${toolkit.dir}" target="clean" />
 		<delete dir="${tmp}" />
 	</target>
 
-	<target name="toolkit" description="Build toolkit code and index the toolkit.">
-		<ant dir="${toolkit}" target="all" />
+	<!-- TODO: currently only the spldoc is generated with commitversion in info.xml -->
+	<target name="spldoc" depends="toolkit"
+		description="Generate the toolkit documentation">
+		<antcall target="setcommitversion"/>
+		<property name="tktitle" value="IBMStreams ${ant.project.name} Toolkit" />
+		<property name="tkauthor" value="IBMStreams Open Source Community at GitHub - https://github.com/IBMStreams/${ant.project.name}" />
+		<echo message="Tookit to SPLDOC: ${toolkit.doc}" />
+		<exec executable="${spl-md}">
+			<arg value="--include-composite-operator-diagram" />
+			<arg value="--author" />
+			<arg value="${tkauthor}" />
+			<arg value="--doc-title" />
+			<arg value="${tktitle}" />
+			<arg value="--directory" />
+			<arg value="${toolkit.dir}" />
+			<arg value="--copy-image-files" />
+			<arg value="--output-directory" />
+			<arg value="${toolkit.doc}" />
+		</exec>
+		<antcall target="revertversion"/>
 	</target>
 	
-	<target name="toolkitIndexOnly" description="Index the toolkit.">
-		<ant dir="${toolkit}" target="toolkit-index" />
+	<target name="spldoc-clean"
+		description="Clean the toolkit documentation">
+		<delete dir="${toolkit.doc}"/>
 	</target>
-
-	<target name="spldoc" depends="spldoc_work, revertversion" />
-
-	<target name="spldoc_work" depends="setcommitversion">
-		<antcall target="spldoctoolkit">
-			<param name="tkdir" value="${toolkit}" />
-			<param name="tktitle" value="IBMStreams ${tkinfo.info:identity.info:name} Toolkit" />
-		</antcall>
-	</target>
-
+	
 	<!-- Test targets -->
-	<target name="tests" depends="toolkit">
-		<ant dir="${toolkit.test}" target="all" />
+	<target name="test" depends="toolkit"
+		description="Execute the toolkit test">
+		<!-- <ant dir="${toolkit.test}" target="all" /> -->
+		<echo message="Check if toolkit is compile clean"/>
+		<antcall target="samples"/>
 	</target>
 
 
 	<!-- Targets called on samples -->
-	<target name="indextoolkit">
-		<echo message="Tookit to index: ${basedir}" />
-		<exec executable="${streams.install}/bin/spl-make-toolkit">
-			<arg value="--directory" />
-			<arg value="${basedir}" />
+	<target name="samples" depends="toolkit"
+		description="Build all samples">
+		<subant target="samplebuild" genericantfile="${basedir}/build.xml" failonerror="true">
+			<dirset dir="samples" includes="*"/>
+		</subant>
+	</target>
+	
+	<target name="samples-clean"
+		description="Clean all samples">
+		<subant target="sampleclean" genericantfile="${basedir}/build.xml" failonerror="true">
+			<dirset dir="samples" includes="*"/>
+		</subant>
+	</target>
+	
+	<target name="samplebuild">
+		<echo message="Sample to build: ${basedir}"/>
+		<exec executable="make" failonerror="true" dir="${basedir}">
+			<arg value="-f"/>
+			<arg value="Makefile"/>
+			<arg value="build"/>
 		</exec>
 	</target>
-	<target name="cleantoolkit">
-		<echo message="Tookit to clean: ${basedir}" />
-		<exec executable="${streams.install}/bin/spl-make-toolkit">
-			<arg value="--clean" />
-			<arg value="--directory" />
-			<arg value="${basedir}" />
+	
+	<target name="sampleclean">
+		<echo message="Sample to clean: ${basedir}"/>
+		 <exec executable="make" failonerror="true" dir="${basedir}">
+			<arg value="-f"/>
+			<arg value="Makefile"/>
+			<arg value="clean"/>
 		</exec>
 	</target>
-	<target name="spldoctoolkit">
-		<property name="tkdir" value="${basedir}" />
-		<echo message="Tookit to SPLDOC: ${tkdir}" />
-		<exec executable="${streams.install}/bin/spl-make-doc">
-			<arg value="--include-composite-operator-diagram" />
-			<arg value="--author" />
-			<arg value="IBMStreams Open Source Community at GitHub - https://github.com/IBMStreams/${ant.project.name}" />
-			<arg value="--doc-title" />
-			<arg value="${tktitle}" />
-			<arg value="--directory" />
-			<arg value="${tkdir}" />
-			<arg value="--copy-image-files" />
-		</exec>
-	</target>
-
+	
 	<!-- Targets to build releases -->
-	<target name="release" depends="clean, all, spldoc, toolkitIndexOnly" description="Make a toolkit release archive">
-		<mkdir dir="${tmp}" />
-		<property name="releasefilename" value="${tmp}/streamsx.sparkmllib.toolkits-${tkinfo.info:identity.info:version}-${DSTAMP}-${TSTAMP}.tgz" />
+	<target name="release" depends="clean" description="Make a toolkit release archive">
+		<antcall target="spldoc"/>
+		<antcall target="samples"/> <!-- check if samples are compile clean -->
+		<antcall target="samples-clean"/> <!-- remove samples build artifacts -->
+		<mkdir dir="${release.dir}"/>
+		<xmlproperty file="${toolkit.dir}/info.xml" prefix="tkinfo" keepRoot="no"/>
+		<echo message="Make releasefile Toolkit Version: ${tkinfo.info:identity.info:version}"/>
+		<property name="releasefilename" value="${release.dir}/${ant.project.name}-${tkinfo.info:identity.info:version}-${DSTAMP}-${TSTAMP}-${commithash}.tgz"/>
+		<!-- TODO: include samples .project .settitngs and .classpath -->
 		<tar compression="gzip" longfile="gnu"
-             destfile="${releasefilename}"
-    	     basedir="${basedir}"
-             includes="${tkinfo.info:identity.info:name}/** samples/**"
-             excludes="**/.gitignore **/.settings/** **/.settings **/.project **/.classpath **/opt/downloaded/**"
-    	/>		
-		<checksum file="${releasefilename}" />
-		<checksum algorithm="sha1" file="${releasefilename}" />
+			destfile="${releasefilename}"
+			basedir="${basedir}"
+			excludes="**/.toolkitList **/.gitignore **/.settings/** **/.settings **/.project **/.classpath **/opt/downloaded/** release/** tmp/**"
+		/>
+		<checksum file="${releasefilename}"/>
+		<checksum algorithm="sha1" file="${releasefilename}"/>
 	</target>
 </project>

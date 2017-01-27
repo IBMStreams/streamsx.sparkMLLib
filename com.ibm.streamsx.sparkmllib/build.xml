@@ -3,21 +3,22 @@
 		Build script to compile the SparkMLLib Toolkit
 	</description>
 
-	<!-- properties directories ... -->
+	<!-- check streams installation -->
 	<property environment="env"/>
-	<property name="streams.install"   value="${env.STREAMS_INSTALL}"/>
+	<fail unless="env.STREAMS_INSTALL" message="No streams installation found. Exiting!"/>
+	<!-- properties directories ... -->
 	<property name="maven.bin"         value="${env.M2_HOME}/bin/mvn"/>
 	<property name="src.dir"           location="impl/java/src"/>
-	<!-- Do not use the default impl/java/bin because impl/java/bin is always put into the sab file. We bundle all class files into the jar -->
-	<property name="build.dir"         location="impl/java/build"/>
+	<!-- Must use the default impl/java/bin because impl/java/bin because spl-make-toolkit seems to look into impl/java/bin dir for operator model classes -->
+	<!-- We do not use a jar because class files from impl/java/bin are always loaded into sab files -->
+	<property name="build.dir"         location="impl/java/bin"/>
 	<property name="lib.dir"           location="impl/lib"/>
 	<property name="ext.downloads.dir" location="opt/downloaded"/>
 	<property name="gensrc.dir"        location="impl/java/src-gen"/>
-	<property name="jarfile"           value="streams-sparkmllib.jar"/>
-	<property name="spl-mt"            value="${streams.install}/bin/spl-make-toolkit"/>
+	<property name="spl-mt"            value="${env.STREAMS_INSTALL}/bin/spl-make-toolkit"/>
 	<!-- class pathes -->
 	<path id="cp.streams">
-		<pathelement location="${streams.install}/lib/com.ibm.streams.operator.samples.jar"/>
+		<pathelement location="${env.STREAMS_INSTALL}/lib/com.ibm.streams.operator.samples.jar"/>
 	</path>
 	<path id="cp.ext.libs">
 		<fileset dir="${ext.downloads.dir}"/>
@@ -28,13 +29,21 @@
 	</path>
 
 	<!-- Main targets -->
-	<target name="all" description="Main Target: Build all artifacts - incremental build">
-		<antcall target="jar"/>
-		<antcall target="toolkit-index"/>
+	<target name="all" depends="build"
+		description="Main Target: Build all artifacts - incremental build">
 	</target>
-	<target name="clean" description="Main Target: Clean all generated and downloaded files">
-		<antcall target="clean-toolkit-index"/>
-		<antcall target="clean-maven-deps"/>
+
+	<target name="build" depends="compile,copy"
+		description="Main Target: Build all artifacts - incremental build">
+		<echo message="Tookit to index: ${basedir}"/>
+		<exec executable="${spl-mt}" failonerror="true">
+			<arg value="-i"/>
+			<arg value="${basedir}"/>
+		</exec>
+	</target>
+
+	<target name="clean" depends="maven-deps-clean"
+		description="Main Target: Clean all generated and downloaded files, clean toolkit index">
 	</target>
 
 	<!-- Sub Targets - Build-->
@@ -45,7 +54,8 @@
 	</target>
 
 	<!-- Downloads libraries using maven -->
-	<target name="maven-deps" depends="init" description="Download required libraries">
+	<target name="maven-deps" depends="init"
+		description="Download required libraries">
 		<fail unless="env.M2_HOME" message="Environment variable M2_HOME not set. Please set this to point to the path of maven home directory" />
 		<mkdir dir="${ext.downloads.dir}" />
 		<exec executable="${maven.bin}" failonerror="true">
@@ -55,7 +65,8 @@
 	</target>
 
 	<!-- Compile sources -->
-	<target name="compile" depends="maven-deps" description="Compile all sources">
+	<target name="compile" depends="maven-deps"
+		description="Compile all sources">
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${gensrc.dir}"/>
 		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="true" includeantruntime="no" excludes="com/ibm/streamsx/sparkmllib/**/*$StreamsModel.java">
@@ -66,43 +77,34 @@
 		</javac>
 	</target>
 
-	<!-- Gen jar file -->
-	<target name="jar" depends="compile" description="Build jar archive">
-		<mkdir dir="${lib.dir}"/>
-		<jar destfile="${lib.dir}/${jarfile}" filesonly="true">
-			<fileset dir="${build.dir}" includes="com/ibm/streamsx/sparkmllib/**/*.class" excludes="com/ibm/streamsx/sparkmllib/**/*$StreamsModel.class"/>
-			<fileset dir="${src.dir}" includes="com/ibm/streamsx/sparkmllib/*.properties"/>
-		</jar>
-		<!-- <delete dir="${build.dir}" /> --> <!-- do not delete the class files to enable incremental build -->
-	</target>
-
-	<!-- Toolkit index -->
-	<target name="toolkit-index" description="Build the toolkit index only">
-		<echo message="Tookit to index: ${basedir}"/>
-		<exec executable="${spl-mt}" failonerror="true">
-			<arg value="-i"/>
-			<arg value="${basedir}"/>
-		</exec>
+	<!-- copy resources into build dir -->
+	<target name="copy">
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}" excludes="**/*.java" includes="com/ibm/streamsx/sparkmllib/*.properties"/>
+		</copy>
 	</target>
 	
 	<!-- Sub Targets - Clean-->
-	<target name="clean-toolkit-index" description="Clean the toolkit index only">
+	<target name="toolkit-index-clean"
+		description="Clean the toolkit index only">
 		<exec executable="${spl-mt}" failonerror="true">
 			<arg value="-c"/>
 			<arg value="-i"/>
 			<arg value="${basedir}"/>
 		</exec>
-	</target>
-	<target name="clean-jar" description="Clean jar archive">
-		<delete dir="${lib.dir}"/>
-	</target>
-	<target name="clean-compile" depends="clean-jar" description="Clean compiler artifacts and all dependencies">
-		<delete dir="${build.dir}"/>
-		<delete dir="${gensrc.dir}"/>
+		<!-- spl-mt does not clean the xml model files for java op -->
 		<delete dir="com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS"/>
 	</target>
-	<target name="clean-maven-deps" depends="clean-compile" description="Clean downloaded librariesand all dependencies">
+
+	<target name="compile-clean" depends="toolkit-index-clean"
+		description="Clean compiler generated artifacts and all dependencies">
+		<delete dir="${build.dir}"/>
+		<delete dir="${gensrc.dir}"/>
+	</target>
+
+	<target name="maven-deps-clean" depends="compile-clean"
+		description="Clean downloaded libraries and all dependencies">
 		<delete dir="${ext.downloads.dir}"/>
 	</target>
-	
+
 </project>
