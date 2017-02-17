@@ -1,0 +1,40 @@
+namespace sample;
+
+use com.ibm.streamsx.sparkmllib.collaborativefiltering::SparkCollaborativeFilteringALS;
+
+/**
+ * This sample demonstrates the use of operator SparkClusteringKMeans
+ * 
+ * On initialization, the operator will load the Spark model.
+ * Each incoming tuple from file data/random_2d.csv is used for analysis against Apache Spark's kmeans clustering machine 
+ * learning library. The analysis result will be passed to the output stream and stored in file data/output.txt.
+ */
+public composite Main
+{
+	graph
+		(stream<int32 x, int32 y> FileSource_3_out0) as FileSource_3 = FileSource()
+		{
+			param
+				file : dataDirectory() + "/random_2d.csv" ;
+		}
+
+//_1		@consistent(trigger=periodic, period=5.0)
+//_1		(stream<rstring analysisResult> SparkClusteringKMeans_3_out0) as
+//_0		(stream<rstring analysisResul> SparkClusteringKMeans_3_out0) as
+			SparkClusteringKMeans_3 = SparkCollaborativeFilteringALS(FileSource_3_out0)
+		{
+			param
+				analysisType : Prediction;
+				attr1 : x;
+				attr2 : y;
+				modelPath : getApplicationDir() + "/etc/kmeans_model" ;
+		}
+
+		() as FileSink_5 = FileSink(SparkClusteringKMeans_3_out0)
+		{
+			param
+				file : dataDirectory() + "/output.txt" ;
+				flush:1u;
+		}
+//_1		() as JCP = JobControlPlane() {}
+}
