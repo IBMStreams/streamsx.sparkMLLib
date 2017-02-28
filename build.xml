@@ -27,7 +27,7 @@
 	
 	<!-- these targets are here due to compatibility -->
 	<target name="all"   depends="toolkit"                    description="Build all toolkit artifacts - incremental build"/>
-	<target name="clean" depends="toolkit-clean,spldoc-clean" description="Clean all generated and downloaded toolkit files, clean samples and clean the documentation"/>
+	<target name="clean" depends="toolkit-clean,doc-clean" description="Clean all generated and downloaded toolkit files, clean samples and clean the documentation"/>
 
 	<!-- Merge the commit hash into toolkit version number -->
 	<target name="setcommitversion">
@@ -58,7 +58,7 @@
 	</target>
 
 	<!-- TODO: currently only the spldoc is generated with commitversion in info.xml -->
-	<target name="spldoc" depends="toolkit"
+	<target name="doc" depends="toolkit"
 		description="Generate the toolkit documentation">
 		<antcall target="setcommitversion"/>
 		<property name="tktitle" value="IBMStreams ${ant.project.name} Toolkit" />
@@ -79,7 +79,7 @@
 		<antcall target="revertversion"/>
 	</target>
 	
-	<target name="spldoc-clean"
+	<target name="doc-clean"
 		description="Clean the toolkit documentation">
 		<delete dir="${toolkit.doc}"/>
 	</target>
@@ -128,7 +128,7 @@
 	
 	<!-- Targets to build releases -->
 	<target name="release" depends="clean" description="Make a toolkit release archive">
-		<antcall target="spldoc"/>
+		<antcall target="doc"/>
 		<antcall target="samples"/> <!-- check if samples are compile clean -->
 		<antcall target="samples-clean"/> <!-- remove samples build artifacts -->
 		<mkdir dir="${release.dir}"/>
