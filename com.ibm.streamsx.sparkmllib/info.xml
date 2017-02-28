@@ -73,6 +73,13 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
 5. Build your application.  You can use the **sc** command or Streams Studio.  
 6. Start the InfoSphere Streams instance. 
 7. Run the application. You can submit the application as a job by using the **streamtool submitjob** command or by using Streams Studio. 
+
++ What's changed
+
+# Version 1.1.0
+
+* Internationalization for languages de_DE, es_ES, fr_FR, it_IT, ja_JP, ko_KR, pt_BR, ru_RU, zh_CN, zh_TW
+
     </info:description>
     <info:version>1.1.0</info:version>
     <info:requiredProductVersion>4.0.1.0</info:requiredProductVersion>
