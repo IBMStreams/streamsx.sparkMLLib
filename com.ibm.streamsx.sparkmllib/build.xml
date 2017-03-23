@@ -9,12 +9,20 @@
 	<!-- properties directories ... -->
 	<property name="maven.bin"         value="${env.M2_HOME}/bin/mvn"/>
 	<property name="src.dir"           location="impl/java/src"/>
+	
 	<!-- Must use the default impl/java/bin because impl/java/bin because spl-make-toolkit seems to look into impl/java/bin dir for operator model classes -->
 	<!-- We do not use a jar because class files from impl/java/bin are always loaded into sab files -->
 	<property name="build.dir"         location="impl/java/bin"/>
-	<property name="lib.dir"           location="impl/lib"/>
+	
+	<!-- We must use a jar because class files because class fieles are not included in the product -->
+	<!-- It seems that the place impl/java/lib is the only way to avoid these alerts:
+	[exec] Class com.ibm.streamsx.sparkmllib.collaborativefiltering.SparkCollaborativeFilteringALS in file impl/lib/streams-sparkmllib.jar
+	was skipped: a class with the same name in file impl/java/bin/com/ibm/streamsx/sparkmllib/collaborativefiltering/SparkCollaborativeFilteringALS$StreamsModel.class was already processed. -->
+	<property name="lib.dir"           location="impl/java/lib"/>
+	
 	<property name="ext.downloads.dir" location="opt/downloaded"/>
 	<property name="gensrc.dir"        location="impl/java/src-gen"/>
+	<property name="jarfile"           value="streams-sparkmllib.jar"/>
 	<property name="spl-mt"            value="${env.STREAMS_INSTALL}/bin/spl-make-toolkit"/>
 	<!-- class pathes -->
 	<path id="cp.streams">
@@ -33,7 +41,7 @@
 		description="Main Target: Build all artifacts - incremental build">
 	</target>
 
-	<target name="build" depends="compile,copy"
+	<target name="build" depends="jar"
 		description="Main Target: Build all artifacts - incremental build">
 		<echo message="Tookit to index: ${basedir}"/>
 		<exec executable="${spl-mt}" failonerror="true">
@@ -78,12 +86,19 @@
 	</target>
 
 	<!-- copy resources into build dir -->
-	<target name="copy">
+	<!-- <target name="copy">
 		<copy todir="${build.dir}">
 			<fileset dir="${src.dir}" excludes="**/*.java" includes="com/ibm/streamsx/sparkmllib/*.properties"/>
 		</copy>
-	</target>
+	</target> -->
 	
+	<target name="jar" depends="compile">
+		<jar destfile="${lib.dir}/${jarfile}" filesonly="true">
+			<fileset dir="${build.dir}" includes="com/ibm/streamsx/sparkmllib/**"/>
+			<fileset dir="${src.dir}" includes="com/ibm/streamsx/sparkmllib/*.properties"/>
+		</jar>
+	</target>
+
 	<!-- Sub Targets - Clean-->
 	<target name="toolkit-index-clean"
 		description="Clean the toolkit index only">
@@ -96,7 +111,12 @@
 		<delete dir="com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS"/>
 	</target>
 
-	<target name="compile-clean" depends="toolkit-index-clean"
+	<target name="jar-clean" depends="toolkit-index-clean"
+		description="Clean jar library artifacts and all dependencies">
+		<delete dir="${lib.dir}"/>
+	</target>
+
+	<target name="compile-clean" depends="jar-clean"
 		description="Clean compiler generated artifacts and all dependencies">
 		<delete dir="${build.dir}"/>
 		<delete dir="${gensrc.dir}"/>

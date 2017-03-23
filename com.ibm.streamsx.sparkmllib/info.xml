@@ -85,4 +85,8 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
     <info:requiredProductVersion>4.0.1.0</info:requiredProductVersion>
   </info:identity>
   <info:dependencies/>
+  <!-- exclude class files to avoid duplicate jar and class files in sab -->
+  <info:sabFiles>
+    <info:exclude path="impl/java/bin/**"/>
+  </info:sabFiles>
 </info:toolkitInfoModel>

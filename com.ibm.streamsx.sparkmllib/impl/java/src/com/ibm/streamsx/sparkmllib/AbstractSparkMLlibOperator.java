@@ -45,7 +45,7 @@ import com.ibm.streams.operator.model.SharedLoader;
  *  instance of this class.
  */
 @SharedLoader
-@Libraries({"@SPARK_HOME@/lib/*"})
+@Libraries({"impl/java/lib/streams-sparkmllib.jar","@SPARK_HOME@/lib/*"})
 public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 
 	
