@@ -7,7 +7,7 @@ ifeq ($(STREAMS_INSTALL),)
     $(error error: environment variable STREAMS_INSTALL has to be set)
 endif
 
-STREAMS_SPARKMLLIB_TOOLKIT ?=../../com.ibm.streamsx.sparkmllib:${STREAMS_INSTALL}/toolkits/com.ibm.streamsx.sparkMLLib
+STREAMS_SPARKMLLIB_TOOLKIT ?=../../com.ibm.streamsx.sparkmllib:${STREAMS_INSTALL}/toolkits/com.ibm.streamsx.sparkmllib
 SPLC_FLAGS ?= -a -t $(STREAMS_SPARKMLLIB_TOOLKIT)
 SPLC = $(STREAMS_INSTALL)/bin/sc
 SPL_CMD_ARGS ?= 
