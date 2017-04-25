@@ -11,6 +11,10 @@
 	<property name="src.dir"           location="impl/java/src"/>
 	
 	<!-- use a non-standard place to avoid that the class files are put into the sab file -->
+	<!-- use a non-standard place to avoid this kind of alerts:
+	     [exec] Class com.ibm.streamsx.sparkmllib.collaborativefiltering.SparkCollaborativeFilteringALS in file lib/streams-sparkmllib.jar 
+	     was skipped: a class with the same name in file impl/java/bin/com/ibm/streamsx/sparkmllib/collaborativefiltering/SparkCollaborativeFilteringALS$StreamsModel.class 
+	     was already processed. -->
 	<property name="build.dir"         location="impl/java/build"/>
 	
 	<!-- We must use a jar because class files because class fieles are not included in the product -->
