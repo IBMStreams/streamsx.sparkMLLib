@@ -10,15 +10,15 @@
 	<property name="maven.bin"         value="${env.M2_HOME}/bin/mvn"/>
 	<property name="src.dir"           location="impl/java/src"/>
 	
-	<!-- Must use the default impl/java/bin because impl/java/bin because spl-make-toolkit seems to look into impl/java/bin dir for operator model classes -->
-	<!-- We do not use a jar because class files from impl/java/bin are always loaded into sab files -->
-	<property name="build.dir"         location="impl/java/bin"/>
+	<!-- use a non-standard place to avoid that the class files are put into the sab file -->
+	<!-- use a non-standard place to avoid this kind of alerts:
+	     [exec] Class com.ibm.streamsx.sparkmllib.collaborativefiltering.SparkCollaborativeFilteringALS in file lib/streams-sparkmllib.jar 
+	     was skipped: a class with the same name in file impl/java/bin/com/ibm/streamsx/sparkmllib/collaborativefiltering/SparkCollaborativeFilteringALS$StreamsModel.class 
+	     was already processed. -->
+	<property name="build.dir"         location="impl/java/build"/>
 	
 	<!-- We must use a jar because class files because class fieles are not included in the product -->
-	<!-- It seems that the place impl/java/lib is the only way to avoid these alerts:
-	[exec] Class com.ibm.streamsx.sparkmllib.collaborativefiltering.SparkCollaborativeFilteringALS in file impl/lib/streams-sparkmllib.jar
-	was skipped: a class with the same name in file impl/java/bin/com/ibm/streamsx/sparkmllib/collaborativefiltering/SparkCollaborativeFilteringALS$StreamsModel.class was already processed. -->
-	<property name="lib.dir"           location="impl/java/lib"/>
+	<property name="lib.dir"           location="lib"/>
 	
 	<property name="ext.downloads.dir" location="opt/downloaded"/>
 	<property name="gensrc.dir"        location="impl/java/src-gen"/>
