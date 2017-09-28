@@ -82,7 +82,7 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
 * Internationalization for languages de_DE, es_ES, fr_FR, it_IT, ja_JP, ko_KR, pt_BR, ru_RU, zh_CN, zh_TW
 
     </info:description>
-    <info:version>1.1.1</info:version>
+    <info:version>1.1.2.__dev__</info:version>
     <info:requiredProductVersion>4.0.1.0</info:requiredProductVersion>
   </info:identity>
   <info:dependencies/>
