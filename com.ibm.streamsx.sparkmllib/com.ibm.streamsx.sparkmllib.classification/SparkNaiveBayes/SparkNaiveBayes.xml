@@ -13,7 +13,7 @@
           <cmn:description>Operator class library</cmn:description>
           <cmn:managedLibrary>
             <cmn:libPath>../../lib/streams-sparkmllib.jar</cmn:libPath>
-            <cmn:libPath>@SPARK_HOME@/lib/*</cmn:libPath>
+	    <cmn:libPath>../../opt/downloaded/*</cmn:libPath>	
           </cmn:managedLibrary>
         </library>
       </libraryDependencies>
@@ -46,6 +46,13 @@
         <description>The spark master to use during the analysis. If not specified, the default value is 'local'</description>
         <optional>true</optional>
         <type>rstring</type>
+        <cardinality>1</cardinality>
+      </parameter>
+      <parameter>
+        <name>getProbabilities</name>
+        <description>Indicates whether the prediction probability array would be returned in the output</description>
+        <optional>true</optional>
+        <type>boolean</type>
         <cardinality>1</cardinality>
       </parameter>
     </parameters>
