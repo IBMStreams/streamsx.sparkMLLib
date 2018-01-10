@@ -12,28 +12,6 @@ sidebar:
 {% include editme %}
 
 
-Descripe on this page the general overview about the domain specific knowledge you want to explain further.
-Separate huge topics to own pages.
+## Overview
 
-## Knowledge Heading level 2
-
-
-**ProTip:** This is a Pro-Tip
-{: .notice--info}
-
-### Knowledge Heading level 3
-
-Some text
-
-Some shell command description
-
-```bash
-bundle install
-```
-
-### Knowledge Another level 3 Heading
-
-**Note:** This is a Notize.
-{: .notice--warning}
-
-
+Apache Spark is a fast general purpose clustering system that is well suited for machine learning algorithms. MLlib is a machine learning library provided with Spark with support for common machine learning algorithms including classification, regression, collaborative filtering and others. The purpose of this project is to allow Spark's MLlib library to be used for real-time scoring of data in InfoSphere Streams.

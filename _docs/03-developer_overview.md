@@ -23,6 +23,8 @@ To get started with developing and building the sparkmllib toolkit, follow the s
 
 This will invoke the Ant Build. build.xml will in turn invoke Maven to download all dependencies required for Spark. Once the dependencies are downloaded, build.xml will proceed to build the java files and call spl-make-toolkit.
 
+For more information on how to get started with toolkit development, refer to the Getting Started with Development guide. [gettingstarted_developing](http://ibmstreams.github.io/streamsx.sparkMLLib/gettingstarted_developing.html)
+
 ## Getting Started with Streams Studio
 Note: Make sure Ant and Maven are installed in your remote host.
 
