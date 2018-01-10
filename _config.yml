@@ -15,7 +15,7 @@ url                      : https://ibmstreams.github.io # the base hostname & pr
 baseurl                  : "/streamsx.sparkMLLib" # the subpath of your site, e.g. "/blog"
 repository               : "IBMStreams/streamsx.sparkMLLib" # GitHub username/repo-name
 github_base_url          : "https://github.com" # your github server, will differ when enterprise github
-github_editme_path       : https://github.com/IBMStreams/streamsx.sparkMLLib/blob/master
+github_editme_path       : https://github.com/IBMStreams/streamsx.sparkMLLib/blob/gh-pages
 spldoc_path              : &default_cta_url "/doc/spldoc/html"
 toolkit_excerpt          : &default_excerpt "Toolkit for real-time scoring using Apache Spark's machine learning library"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
