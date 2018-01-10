@@ -28,13 +28,13 @@ This will invoke the Ant Build. build.xml will in turn invoke Maven to download 
 
 To import this toolkit project into Streams Studio:
 
-    Install "Egit" into Streams Studio (https://www.eclipse.org/egit/)
-    In the Git Repositories View, click on the "Clone a Git Repitory" button
-    After the repository is cloned, follow the dialog to import existing project into your workspace.
-    You will not have the dependencies needed for Studio to build the project correctly. Go to the command line and to the root of the toolkit project (for example, streamsx.sparkmllib/com.ibm.streamsx.sparkmllib).
-    Type "ant maven-deps" - to kick off a build at the command line for the first time. This will get all the dependencies downloaded.
-    Refresh your project in Streams Studio to get all the jar files included in your workspace
-    Build the com.ibm.streamsx.sparkmllib toolkit project in Studio - The build should be successful at this point.
+Install "Egit" into Streams Studio (https://www.eclipse.org/egit/)
+In the Git Repositories View, click on the "Clone a Git Repitory" button
+After the repository is cloned, follow the dialog to import existing project into your workspace.
+You will not have the dependencies needed for Studio to build the project correctly. Go to the command line and to the root of the toolkit project (for example, streamsx.sparkmllib/com.ibm.streamsx.sparkmllib).
+Type "ant maven-deps" - to kick off a build at the command line for the first time. This will get all the dependencies downloaded.
+Refresh your project in Streams Studio to get all the jar files included in your workspace
+Build the com.ibm.streamsx.sparkmllib toolkit project in Studio - The build should be successful at this point.
 
 
 
@@ -47,13 +47,13 @@ You can set up remote development on Windows.
 
 To import this toolkit project into Streams Studio on Windows:
 
-    Install "Egit" into Streams Studio (https://www.eclipse.org/egit/)
-    In the Git Repositories View, click on the "Clone a Git Repitory" button
-    After the repository is cloned, follow the dialog to import existing project into your workspace.
-    Select the toolkit project, Right click -> Copy project to remote host - This will copy the project to the remote Linux host where actual compilation needs to happen.
-    You will not have the dependencies needed for Studio to build the project correctly at this point. Open a command prompt to the remote Linux host.
-    Go to the root directory of the toolkit project
-    Type "ant maven-deps" - to kick off the ant build that pulls in all the necessary dependencies.
-    In Streams Studio on Windows, select the "opt" folder under the toolkit project. Right click -> Remote Reconciler -> Pull from (remote host) - This action will pull all the jar files from your remote Linux host to your Windows machine.
-    Build the com.ibm.streamsx.sparkmllib toolkit project in Studio - The build should be successful at this point.
+Install "Egit" into Streams Studio (https://www.eclipse.org/egit/)
+In the Git Repositories View, click on the "Clone a Git Repitory" button
+After the repository is cloned, follow the dialog to import existing project into your workspace.
+Select the toolkit project, Right click -> Copy project to remote host - This will copy the project to the remote Linux host where actual compilation needs to happen.
+You will not have the dependencies needed for Studio to build the project correctly at this point. Open a command prompt to the remote Linux host.
+Go to the root directory of the toolkit project
+Type "ant maven-deps" - to kick off the ant build that pulls in all the necessary dependencies.
+In Streams Studio on Windows, select the "opt" folder under the toolkit project. Right click -> Remote Reconciler -> Pull from (remote host) - This action will pull all the jar files from your remote Linux host to your Windows machine.
+Build the com.ibm.streamsx.sparkmllib toolkit project in Studio - The build should be successful at this point.
 
