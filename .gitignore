@@ -18,6 +18,7 @@ downloaded/
 /release/
 
 #Streams Studio generated artifacts to ignore
+/.project
 .toolkitList
 .apt_generated/
 
