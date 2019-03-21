@@ -17,7 +17,7 @@
 	     was already processed. -->
 	<property name="build.dir"         location="impl/java/build"/>
 	
-	<!-- We must use a jar because class files because class fieles are not included in the product -->
+	<!-- We must use a jar because class files because class files are not included in the product -->
 	<property name="lib.dir"           location="lib"/>
 	
 	<property name="ext.downloads.dir" location="opt/downloaded"/>
