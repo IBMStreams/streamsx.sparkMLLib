@@ -13,7 +13,7 @@ or the SPL compiler to be aware of the location of the toolkit.
 
 * Install IBM InfoSphere Streams.  Configure the product environment variables by entering the following command: 
       source product-installation-root-directory/4.0.1.0/bin/streamsprofile.sh
-* Install a version of Apache Spark 1.4.0+ and set the SPARK_HOME environment variable to the location where Spark is installed. Note that SPARK_HOME must be set on all nodes of the Streams cluster where a SparkMLLib operator can run.
+* Install a version of Apache Spark 2.4.0 and set the SPARK_HOME environment variable to the location where Spark is installed. Note that SPARK_HOME must be set on all nodes of the Streams cluster where a SparkMLLib operator can run.
 * Generate a Spark model as described in the next section and save it to the local filesystem or HDFS.
 
 # Spark Models
