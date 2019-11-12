@@ -13,7 +13,7 @@
           <cmn:description>Operator class library</cmn:description>
           <cmn:managedLibrary>
             <cmn:libPath>../../lib/streams-sparkmllib.jar</cmn:libPath>
-            <cmn:libPath>@SPARK_HOME@/jars/*</cmn:libPath>
+            <cmn:libPath>../../opt/downloaded/*</cmn:libPath>
           </cmn:managedLibrary>
         </library>
       </libraryDependencies>
