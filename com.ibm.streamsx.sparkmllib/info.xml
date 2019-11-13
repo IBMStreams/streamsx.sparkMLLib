@@ -3,12 +3,14 @@
   <info:identity>
     <info:name>com.ibm.streamsx.sparkmllib</info:name>
     <info:description>
-    Apache Spark is a fast general purpose clustering system that is well suited for machine learning algorithms.
-     MLlib is a machine learning library provided with Spark with support for common machine learning algorithms
-     including classification, regression, collaborative filtering and others. This toolkit allows Spark's MLlib library 
-     to be used for real-time scoring of data in InfoSphere Streams.
+      Apache Spark is a fast general purpose clustering system that is well suited for machine learning algorithms.
+      MLlib is a machine learning library provided with Spark with support for common machine learning algorithms
+      including classification, regression, collaborative filtering and others. This toolkit allows Spark's MLlib library 
+      to be used for real-time scoring of data in InfoSphere Streams.
+
+      The toolkit is based on org.apache.spark.spark-mllib 2.4.4 (Scala 2.11)
     </info:description>
-    <info:version>1.2.0</info:version>
+    <info:version>1.3.0</info:version>
     <info:requiredProductVersion>4.0.1.0</info:requiredProductVersion>
   </info:identity>
   <info:dependencies/>
