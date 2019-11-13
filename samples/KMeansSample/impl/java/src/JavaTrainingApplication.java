@@ -1,5 +1,3 @@
-import java.io.File;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -15,6 +13,7 @@ public class JavaTrainingApplication {
 		JavaSparkContext jsc = new JavaSparkContext(conf);
 		
 		JavaRDD<String> lines = jsc.textFile("data/random_2d_training.csv");
+		@SuppressWarnings("serial")
 		JavaRDD<Vector> parsedData = lines.map(
 	      new Function<String, Vector>() {
 			@Override
