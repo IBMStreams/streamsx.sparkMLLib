@@ -18,7 +18,8 @@
 	<property name="build.dir"         location="impl/java/build"/>
 	
 	<!-- We must use a jar because class files because class files are not included in the product -->
-	<property name="lib.dir"           location="lib"/>
+	<property name="lib.dir"           location="impl/lib"/>
+	<property name="lib.dir.old"       location="lib"/>
 	
 	<property name="ext.downloads.dir" location="opt/downloaded"/>
 	<property name="gensrc.dir"        location="impl/java/src-gen"/>
@@ -59,6 +60,7 @@
 	<target name="init">
 		<fail unless="env.M2_HOME" message="Environment variable M2_HOME not set. Please set this to point to the path of maven home directory"/>
 		<echo>Maven environment ${env.M2_HOME}</echo>
+		<mkdir dir="${lib.dir}"/>
 	</target>
 
 	<!-- Downloads libraries using maven -->
@@ -93,9 +95,15 @@
 	</target> -->
 	
 	<target name="jar" depends="compile">
+		<manifestclasspath property="jar.cp.manifest" jarfile="${lib.dir}/${jarfile}">
+			<classpath refid="cp.ext.libs" />
+		</manifestclasspath>
 		<jar destfile="${lib.dir}/${jarfile}" filesonly="true">
 			<fileset dir="${build.dir}" includes="com/ibm/streamsx/sparkmllib/**"/>
 			<fileset dir="${src.dir}" includes="com/ibm/streamsx/sparkmllib/*.properties"/>
+			<manifest>
+				<attribute name="Class-Path" value="${jar.cp.manifest}" />
+			</manifest>
 		</jar>
 	</target>
 
@@ -114,6 +122,7 @@
 	<target name="jar-clean" depends="toolkit-index-clean"
 		description="Clean jar library artifacts and all dependencies">
 		<delete dir="${lib.dir}"/>
+		<delete dir="${lib.dir.old}"/>
 	</target>
 
 	<target name="compile-clean" depends="jar-clean"

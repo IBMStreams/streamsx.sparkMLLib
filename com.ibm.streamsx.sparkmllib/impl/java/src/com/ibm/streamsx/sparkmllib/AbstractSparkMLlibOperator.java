@@ -45,10 +45,8 @@ import com.ibm.streams.operator.model.SharedLoader;
  *  instance of this class.
  */
 @SharedLoader
-@Libraries({"opt/downloaded/*"})
 public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 
-	
 	private static final String CLASS_NAME =  AbstractSparkMLlibOperator.class.getName();
 	/**
 	 * Create a {@code Logger} specific to this class that will write to the SPL

@@ -29,5 +29,6 @@ build:
 
 clean:
 	$(SPLC) $(SPLC_FLAGS) -C -M $(SPL_MAIN_COMPOSITE) -t ${TOOLKIT_PATH} --data-directory $(DATA_DIR) --output-dir $(OUTPUT_DIR) $(SPL_CMD_ARGS)
+	rm -f $(DATA_DIR)/output.txt
 
 all: clean build

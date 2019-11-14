@@ -30,10 +30,10 @@
 	<tstamp/>
 
 	<!-- these targets are here due to compatibility -->
-	<target name="all"   depends="doc,releaseinfo"
+	<target name="all"   depends="spldoc,releaseinfo"
 		description="Build all toolkit artifacts and spl docs - incremental build"/>
 	
-	<target name="clean" depends="toolkit-clean,doc-clean,releaseinfo-clean"
+	<target name="clean" depends="toolkit-clean,spldoc-clean,releaseinfo-clean"
 		description="Clean all generated and downloaded toolkit files, clean samples and clean the documentation">
 		<delete dir="${out.dir}"/>
 	</target>
@@ -54,7 +54,7 @@
 		<delete dir="${tmp}" />
 	</target>
 
-	<target name="doc" depends="toolkit"
+	<target name="spldoc" depends="toolkit"
 		description="Generate the toolkit documentation">
 		<property name="tktitle" value="IBMStreams ${ant.project.name} Toolkit" />
 		<property name="tkauthor" value="IBMStreams Open Source Community at GitHub - https://github.com/IBMStreams/${ant.project.name}" />
@@ -73,7 +73,7 @@
 		</exec>
 	</target>
 	
-	<target name="doc-clean"
+	<target name="spldoc-clean"
 		description="Clean the toolkit documentation">
 		<delete dir="${doc.dir}"/>
 	</target>
@@ -140,7 +140,7 @@
 			destfile="${releasefilename}"
 			basedir="${basedir}"
 			includes="${toolkit.dir}/** ${samples.dir}/** ${doc.string}/** README.md LICENSE"
-			excludes="**/.toolkitList **/.gitignore ${toolkit.dir}/.settings/ ${toolkit.dir}/.project ${toolkit.dir}/.classpath ${toolkit.dir}/build.xml ${toolkit.dir}/pom.xml ${toolkit.dir}/impl/java/ ${release.dir}/** ${samples.dir}/*/output/ **/.apt_generated"
+			excludes="**/.toolkitList **/.gitignore ${toolkit.dir}/.settings/ ${toolkit.dir}/.project ${toolkit.dir}/.classpath ${toolkit.dir}/build.xml ${toolkit.dir}/pom.xml ${toolkit.dir}/impl/java/ ${samples.dir}/*/output/ **/.apt_generated"
 		/>
 		<checksum file="${releasefilename}"/>
 		<checksum algorithm="sha1" file="${releasefilename}"/>
