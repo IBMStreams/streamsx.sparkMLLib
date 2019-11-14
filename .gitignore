@@ -16,6 +16,7 @@ downloaded/
 
 #ignored only here
 /release/
+/com.ibm.streamsx.sparkmllib/build.info
 
 #Streams Studio generated artifacts to ignore
 /.project

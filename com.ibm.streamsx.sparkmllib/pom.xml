@@ -7,7 +7,7 @@
 	<version>1.3.0</version>
 	<name>com.ibm.streamsx.sparkmllib</name>
 	<repositories>
-		 <repository>
+		<repository>
 			<id>apache.snapshots</id>
 			<url>https://repository.apache.org/content/repositories/snapshots/</url>
 		</repository>

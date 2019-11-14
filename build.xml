@@ -1,40 +1,55 @@
+<!--
+==============================================
+# Licensed Materials - Property of IBM
+# Copyright IBM Corp. 2019
+==============================================
+-->
 
 <project name="streamsx.sparkMLLib" default="all">
 	<description>Build file for streamsx.sparkmllib project, built the toolkits.</description>
-	
+
 	<!-- check streams install -->
 	<property environment="env" />
 	<!-- Exit if there is a bad value in streams.install -->
 	<fail unless="env.STREAMS_INSTALL" message="No streams installation found. Exiting!"/>
+
 	<!-- set global properties for this build -->
-	<property name="toolkit.dir"     value="com.ibm.streamsx.sparkmllib" />
-	<property name="toolkit.test"    value="tests" />
-	<property name="doc.string"      value="doc"/>
-	<property name="doc.dir"         value="doc/spldoc" />
-	<property name="samples.dir"     value="samples" />
-	<property name="spl-mt"          value="${env.STREAMS_INSTALL}/bin/spl-make-toolkit"/>
-	<property name="spl-md"          value="${env.STREAMS_INSTALL}/bin/spl-make-doc"/>
-	<property name="release.dir"     value="release"/>
+	<property name="toolkit.dir"         value="com.ibm.streamsx.sparkmllib" />
+	<property name="toolkit.test"        value="tests" />
+	<property name="doc.string"          value="doc"/>
+	<property name="doc.dir"             value="doc/spldoc" />
+	<property name="samples.dir"         value="samples" />
+	<property name="release.dir"         value="release"/>
+	<property name="release.info.file"   value="${toolkit.dir}/build.info"/>
+	<property name="out.dir"             location="${toolkit.dir}/output"/>  <!-- streams studio bin dir / used only on clean target -->
+	
+	<property name="spl-md"              value="${env.STREAMS_INSTALL}/bin/spl-make-doc"/>
+	<property name="spl-st"              value="${env.STREAMS_INSTALL}/bin/streamtool"/>
 
 	<!-- Create the time stamp -->
 	<tstamp/>
 
-	<!-- Extract the git commit hash -->
-	<exec executable="git" outputproperty="commithash">
-		<arg value="rev-parse" />
-		<arg value="--short" />
-		<arg value="HEAD" />
-	</exec>
-	
 	<!-- these targets are here due to compatibility -->
-	<target name="all"   depends="doc"                     description="Build all toolkit artifacts and spl docs - incremental build"/>
-	<target name="clean" depends="toolkit-clean,doc-clean" description="Clean all generated and downloaded toolkit files, clean samples and clean the documentation"/>
+	<target name="all"   depends="doc,releaseinfo"
+		description="Build all toolkit artifacts and spl docs - incremental build"/>
+	
+	<target name="clean" depends="toolkit-clean,doc-clean,releaseinfo-clean"
+		description="Clean all generated and downloaded toolkit files, clean samples and clean the documentation">
+		<delete dir="${out.dir}"/>
+	</target>
 
-	<target name="toolkit" description="Build toolkit code and index the toolkit - incremental build.">
+	<target name="init">
+		<xmlproperty file="${toolkit.dir}/info.xml" prefix="tkinfo" keepRoot="no"/>
+		<echo>Build tk version: ${tkinfo.info:identity.info:version}</echo>
+	</target>
+	
+	<target name="toolkit" depends="init"
+		description="Build toolkit code and index the toolkit - incremental build.">
 		<ant dir="${toolkit.dir}" target="all" />
 	</target>
 	
-	<target name="toolkit-clean" depends="samples-clean" description="Clean all generated and downloaded toolkit files and cleans samples">
+	<target name="toolkit-clean" depends="samples-clean"
+		description="Clean all generated and downloaded toolkit files and cleans samples">
 		<ant dir="${toolkit.dir}" target="clean" />
 		<delete dir="${tmp}" />
 	</target>
@@ -106,11 +121,18 @@
 	</target>
 	
 	<!-- Targets to build releases -->
-	<target name="release" depends="clean" description="Make a toolkit release archive">
-		<antcall target="doc"/>
+	<target name="release" depends="clean"
+		description="Make a toolkit release archive">
+		<antcall target="all"/>
 		<antcall target="samples"/> <!-- check if samples are compile clean -->
 		<antcall target="samples-clean"/> <!-- remove samples build artifacts -->
 		<mkdir dir="${release.dir}"/>
+		<!-- Extract the git commit hash -->
+		<exec executable="git" outputproperty="commithash">
+			<arg value="rev-parse" />
+			<arg value="--short" />
+			<arg value="HEAD" />
+		</exec>
 		<xmlproperty file="${toolkit.dir}/info.xml" prefix="tkinfo" keepRoot="no"/>
 		<echo message="Make releasefile Toolkit Version: ${tkinfo.info:identity.info:version}"/>
 		<property name="releasefilename" value="${release.dir}/${ant.project.name}-${tkinfo.info:identity.info:version}-${commithash}-${DSTAMP}-${TSTAMP}.tgz"/>
@@ -118,9 +140,37 @@
 			destfile="${releasefilename}"
 			basedir="${basedir}"
 			includes="${toolkit.dir}/** ${samples.dir}/** ${doc.string}/** README.md LICENSE"
-			excludes="**/.toolkitList **/.gitignore ${toolkit.dir}/.settings/ ${toolkit.dir}/.project ${toolkit.dir}/.classpath ${toolkit.dir}/build.xml ${toolkit.dir}/pom.xml ${toolkit.dir}/impl/java/ **/opt/downloaded/** ${release.dir}/** ${samples.dir}/*/output/ tmp/**"
+			excludes="**/.toolkitList **/.gitignore ${toolkit.dir}/.settings/ ${toolkit.dir}/.project ${toolkit.dir}/.classpath ${toolkit.dir}/build.xml ${toolkit.dir}/pom.xml ${toolkit.dir}/impl/java/ ${release.dir}/** ${samples.dir}/*/output/ **/.apt_generated"
 		/>
 		<checksum file="${releasefilename}"/>
 		<checksum algorithm="sha1" file="${releasefilename}"/>
 	</target>
+
+	<!-- Extract the git commit hash and make release info -->
+	<target name="releaseinfo" depends="init"
+		description="Make the release information file">
+		<exec executable="git" outputproperty="commithash.long" failonerror="true">
+			<arg value="rev-parse" />
+			<arg value="HEAD" />
+		</exec>
+		<exec executable="bash" outputproperty="streamsversion" failonerror="true">
+			<arg value="-c"/>
+			<arg value="${spl-st} version | grep Version="/>
+		</exec>
+		<exec executable="bash" failonerror="true">
+			<arg value="-c" />
+			<arg value="echo -e &quot;commit_hash=${commithash.long}\nos=${os.version}\nStreams_${streamsversion}&quot; > ${release.info.file}"/>
+		</exec>
+		<echo message="Generated release info file ${release.info.file}"/>
+		<exec executable="bash" failonerror="true">
+			<arg value="-c" />
+			<arg value="cat ${release.info.file}" />
+		</exec>
+	</target>
+
+	<target name="releaseinfo-clean"
+		description="Remove the release information file">
+		<delete file="${release.info.file}"/>
+	</target>
+
 </project>
