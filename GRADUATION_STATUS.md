@@ -18,10 +18,10 @@ Incubation for projects is covered here: https://github.com/IBMStreams/administr
   * Status: Instruction exists but is currently not in the right place
 - [ ] :white_check_mark: Website that contains information and documentation of the project
   * Status: http://ibmstreams.github.io/streamsx.sparkMLLib/
-- [ ] :red_circle: Clear release plan
-  * Status: **TBD**
-- [ ] :large_orange_diamond: At least one active committer
-  * Status: Committers who have made many commits but not that many recently, new contributions from non-committers.
+- [ ] :white_check_mark: Clear release plan
+  * Status: Clear release plan exists
+- [ ] :white_check_mark: At least one active committer
+  * Status: One active commiter exists, new contributions from non-committers.
 
 ### Key
 * :white_check_mark: - Complete
