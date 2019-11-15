@@ -1,0 +1,28 @@
+use com.ibm.streamsx.sparkmllib.collaborativefiltering::SparkCollaborativeFilteringALS;
+
+public composite Main
+{
+	graph
+		(stream<int32 x, int32 y> FileSource_3_out0) as FileSource_3 = FileSource()
+		{
+			param
+				file : dataDirectory() + "/random_2d.csv" ;
+		}
+
+		(stream<rstring analysisResul> SparkClusteringKMeans_3_out0) as
+			SparkClusteringKMeans_3 = SparkCollaborativeFilteringALS(FileSource_3_out0)
+		{
+			param
+				analysisType : Prediction;
+				attr1 : x;
+				attr2 : y;
+				modelPath : getApplicationDir() + "/etc/kmeans_model" ;
+		}
+
+		() as FileSink_5 = FileSink(SparkClusteringKMeans_3_out0)
+		{
+			param
+				file : dataDirectory() + "/output.txt" ;
+				flush:1u;
+		}
+}

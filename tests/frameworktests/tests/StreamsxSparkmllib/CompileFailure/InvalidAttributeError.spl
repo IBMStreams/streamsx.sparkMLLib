@@ -1,0 +1,55 @@
+use com.ibm.streamsx.sparkmllib.clustering::SparkClusteringKMeans ;
+
+composite InvalidAttributeError
+{
+	param 
+		expression<rstring> $modelPath :(rstring)getSubmissionTimeValue("modelPath", "");
+	graph
+		(stream<rstring reload> Custom_3_out0) as Custom_3 =
+			Custom(SparkClusteringKMeans_3_out0 as inputStream)
+		{
+			logic
+				state : mutable int32 count = 0 ;
+				onTuple inputStream :
+				{
+					count ++ ;
+					if(count % 10 == 0)
+					{
+						mutable tuple<rstring reload> out = { } ;
+						out.reload =(rstring) "{\"reloadModel\":true}" ;
+						submit(out, 0u) ;
+					}
+
+				}
+
+		}
+
+		(stream<float64 x, float64 y> FileSource_3_out0) as FileSource_3 = FileSource()
+		{
+			param
+				file : "random_2d.csv" ;
+		}
+
+		(stream<int32 wrongAttr> SparkClusteringKMeans_3_out0) as
+			SparkClusteringKMeans_3 = SparkClusteringKMeans(Functor_4_out0 ;
+			Custom_3_out0)
+		{
+			param
+				testDataAttr : testData ;
+				modelPath : $modelPath ;
+		}
+
+		(stream<list<float64> testData> Functor_4_out0) as Functor_4 =
+			Functor(FileSource_3_out0 as inputStream)
+		{
+			output
+				Functor_4_out0 : testData = [x,y ] ;
+		}
+
+		() as FileSink_5 = FileSink(SparkClusteringKMeans_3_out0)
+		{
+			param
+				file : "output.txt" ;
+				flush:1u;
+		}
+}

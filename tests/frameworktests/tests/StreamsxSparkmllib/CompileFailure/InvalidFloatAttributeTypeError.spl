@@ -1,0 +1,34 @@
+use com.ibm.streamsx.sparkmllib.classification::SparkNaiveBayes ;
+
+composite InvalidFloatAttributeTypeError
+{
+	param 
+		expression<rstring> $modelPath :(rstring)getSubmissionTimeValue("modelPath", "");
+	graph
+		(stream<list<float64> features> Beacon_4_out0 as O) as Beacon_4 = Beacon()
+		{
+			logic
+				state : mutable int32 i = 0 ;
+			param
+				iterations : 100 ;
+				period : 0.1 ;
+			output
+				O : features = [ 0.0, 1.2, 1.3 ] ;
+		}
+
+		(stream<list<float64> features, int32 analysisResult>
+			SparkNaiveBayes_5_out0) as SparkNaiveBayes_5 =
+			SparkNaiveBayes(Beacon_4_out0)
+		{
+			param
+				modelPath : $modelPath;
+				testDataAttr : Beacon_4_out0.features ;
+				params : "spark.cores.max=4" ;
+		}
+
+		() as FileSink_4 = FileSink(SparkNaiveBayes_5_out0 as inputStream)
+		{
+			param
+				file : "output.txt" ;
+		}
+}
