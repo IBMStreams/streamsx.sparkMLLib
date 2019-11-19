@@ -21,6 +21,7 @@
 	<property name="samples.dir"         value="samples" />
 	<property name="release.dir"         value="release"/>
 	<property name="release.info.file"   value="${toolkit.dir}/build.info"/>
+	<property name="test.dir"            location="tests/frameworktests"/>
 	<property name="out.dir"             location="${toolkit.dir}/output"/>  <!-- streams studio bin dir / used only on clean target -->
 	
 	<property name="spl-md"              value="${env.STREAMS_INSTALL}/bin/spl-make-doc"/>
@@ -77,15 +78,6 @@
 		description="Clean the toolkit documentation">
 		<delete dir="${doc.dir}"/>
 	</target>
-	
-	<!-- Test targets -->
-	<target name="test" depends="toolkit"
-		description="Execute the toolkit test">
-		<!-- <ant dir="${toolkit.test}" target="all" /> -->
-		<echo message="Check if toolkit is compile clean"/>
-		<antcall target="samples"/>
-	</target>
-
 
 	<!-- Targets called on samples -->
 	<target name="samples" depends="toolkit"
@@ -120,6 +112,27 @@
 		</exec>
 	</target>
 	
+	<!-- Test targets -->
+	<target name="test" depends="toolkit"
+		description="Execute the toolkit test. Requires an up to date toolkit build">
+		<echo message="Start full test"/>
+		<exec executable="./runTest.sh" dir="${test.dir}" failonerror="true">
+			<arg value="--noprompt"/>
+			<arg value="--no-browser"/>
+		</exec>
+	</target>
+
+	<target name="test-quick" depends="toolkit"
+		description="Execute the toolkit quick test. Requires an up to date toolkit build">
+		<echo message="Start quick test"/>
+		<exec executable="./runTest.sh" dir="${test.dir}" failonerror="true">
+			<arg value="--noprompt"/>
+			<arg value="--no-browser"/>
+			<arg value="--category"/>
+			<arg value="quick"/>
+		</exec>
+	</target>
+
 	<!-- Targets to build releases -->
 	<target name="release" depends="clean"
 		description="Make a toolkit release archive">

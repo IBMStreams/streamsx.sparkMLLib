@@ -19,7 +19,6 @@ STEPS=(
 	'sleep 10'
 	'cancelJobAndLog'
 	'echoExecuteInterceptAndSuccess diff data/expected.txt data/output.txt'
-	'checkLogsNoError2'
 )
 
 FINS='cancelJobAndLog'
