@@ -77,6 +77,17 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
 6. Run the application. You can submit the application as a job by using the **streamtool submitjob** command or by using Streams Studio. 
 
 # What's changed
+## Versiom 1.3.0
+* The toolkit not longer depend on an installation of Apache Spark and does not need a SPARK_HOME environment variable,
+  The toolkit bundles the Sparkmllib libraries along with the toolkit code
+* Correct streams studio classpath settings in toolkit project and sample
+* Use studio settings in sample makefile if build from studio
+* Update description
+* Remove compiler warnings
+* Describe spark master parameter
+* Add framework tests
+* Add test and release targets to main build.xml
+
 ## Version 1.2.0
 * Use of actual stark version 2.4.0
 
