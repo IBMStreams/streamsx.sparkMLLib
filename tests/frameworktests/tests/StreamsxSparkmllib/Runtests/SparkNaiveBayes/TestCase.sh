@@ -5,7 +5,7 @@ PREPS=(
 	'TT_mainComposite="test::Main"'
 	'splCompile'
 	'TT_sabFile="output/test.Main.sab"'
-	'TT_traceLevel="error"'
+	'TT_traceLevel="trace"'
 	'rm -f "data/output.txt"'
 )
 

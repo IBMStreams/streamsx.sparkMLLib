@@ -5,7 +5,7 @@ PREPS=(
 	'TT_mainComposite="test::Main"'
 	'splCompile'
 	'TT_sabFile="output/test.Main.sab"'
-	'TT_traceLevel="error"'
+	'TT_traceLevel="warn"'
 	'rm -f "data/output.txt"'
 )
 
@@ -16,6 +16,7 @@ STEPS=(
 	'waitForJobHealth'
 	'TT_waitForFileName="$TT_dataDir/WindowMarker"'
 	'waitForFinAndCheckHealth'
+	'sleep 10'
 	'cancelJobAndLog'
 	'echoExecuteInterceptAndSuccess diff data/expected.txt data/output.txt'
 	'checkLogsNoError2'
