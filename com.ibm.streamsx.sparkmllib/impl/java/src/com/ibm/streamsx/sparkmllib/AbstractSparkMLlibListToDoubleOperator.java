@@ -19,7 +19,6 @@ import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
 import com.ibm.streams.operator.logging.TraceLevel;
-import com.ibm.streams.operator.logging.LoggerNames;
 
 /**
  * A specialized abstract operator class that assumes that the concrete operator class handles 
@@ -71,6 +70,7 @@ public abstract class AbstractSparkMLlibListToDoubleOperator<T> extends Abstract
 		//For each incoming tuple, extract the testDataAttr attribute value as a list of doubles
 
 		try {
+			@SuppressWarnings("unchecked")
 			List<Double> testDataList = (List<Double>)tuple.getList(testDataAttr.getIndex());
 
 			//transform the list into a Spark Vector

@@ -21,7 +21,6 @@ import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
 import com.ibm.streams.operator.logging.TraceLevel;
-import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
 import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibOperator;
@@ -77,6 +76,7 @@ public class SparkClusteringKMeans extends AbstractSparkMLlibOperator<KMeansMode
 			throws Exception {
 		try {
 			//For each incoming tuple, extract the testDataAttr attribute value as a list of doubles
+			@SuppressWarnings("unchecked")
 			List<Double> testDataList = (List<Double>)tuple.getList(testDataAttr.getIndex());
 
 			//transform the list into a Spark Vector

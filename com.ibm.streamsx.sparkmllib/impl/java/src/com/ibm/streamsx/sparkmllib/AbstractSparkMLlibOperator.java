@@ -29,9 +29,7 @@ import com.ibm.streams.operator.Type;
 import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
 import com.ibm.streams.operator.logging.TraceLevel;
-import com.ibm.streams.operator.logging.LoggerNames;
 import com.ibm.streams.operator.meta.CollectionType;
-import com.ibm.streams.operator.model.Libraries;
 import com.ibm.streams.operator.model.Parameter;
 import com.ibm.streams.operator.model.SharedLoader;
 
@@ -45,10 +43,8 @@ import com.ibm.streams.operator.model.SharedLoader;
  *  instance of this class.
  */
 @SharedLoader
-@Libraries({"@SPARK_HOME@/jars/*"})
 public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 
-	
 	private static final String CLASS_NAME =  AbstractSparkMLlibOperator.class.getName();
 	/**
 	 * Create a {@code Logger} specific to this class that will write to the SPL
@@ -112,7 +108,7 @@ public abstract class AbstractSparkMLlibOperator<T> extends AbstractOperator {
 		this.modelPath = path;
 	}
 	
-	@Parameter(name="sparkMaster",optional=true,description="The spark master to use during the analysis. If not specified, the default value is 'local'")
+	@Parameter(name="sparkMaster",optional=true,description="The master URL to connect to, such as 'local' to run locally with one thread, 'local\\\\[4\\\\]' to run locally with 4 cores, or 'spark://master:7077' to run on a Spark standalone cluster.If not specified, the default value is 'local'")
 	public void setSparkMaster(String masterString) {
 		this.masterString = masterString;
 	}

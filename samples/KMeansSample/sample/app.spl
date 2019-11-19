@@ -39,4 +39,7 @@ public composite Main
 				file : dataDirectory() + "/output.txt" ;
 				flush:1u;
 		}
+
+	config
+		restartable: false;
 }
