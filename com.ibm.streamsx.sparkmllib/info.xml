@@ -8,7 +8,20 @@
       including classification, regression, collaborative filtering and others. This toolkit allows Spark's MLlib library 
       to be used for real-time scoring of data in InfoSphere Streams.
 
-      The toolkit is based on org.apache.spark.spark-mllib 2.4.4 (Scala 2.11)
+      The toolkit is based on org.apache.spark.spark-mllib 2.4.4 (Scala 2.11; hadoop 2.6.5)
+      
+      This set of operators that provide real-time scoring based on Apache Sparkmllib.
+      Currently, each operator initializes a SparkContext which makes it behave as a spark "driver". 
+      Hence, there is 1 spark job for every operator under which scoring occurs. By default, the job runs locally in 
+      thread but you can optionally pass a spark master location (parameter sparkMaster) to run it on a cluster. 
+
+      Some models like the collaborative filtering one store their internal state as RDDs so when we ask for scoring, 
+      the action runs against these internal state RDDs. In most cases, RDDs are also created during the model load 
+      process. If you pass a remote spark master then the operation may be performed on one or more remote worker 
+      machines known to the master node and the results passed back to the driver (which in our case is the operator).
+      
+      Actually can't have multiple spark contexts in a single JVM, so you can't fuse multiple operators into one PE. To make sure 
+      that multiple sparkmllib operators use different PE's use operator configuration placement clause (partitionExlocation).
     </info:description>
     <info:version>1.3.0</info:version>
     <info:requiredProductVersion>4.0.1.0</info:requiredProductVersion>
