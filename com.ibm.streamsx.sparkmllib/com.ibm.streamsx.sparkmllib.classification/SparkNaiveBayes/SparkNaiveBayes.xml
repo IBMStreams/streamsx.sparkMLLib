@@ -47,6 +47,13 @@
         <type>rstring</type>
         <cardinality>1</cardinality>
       </parameter>
+      <parameter>
+        <name>getProbabilities</name>
+        <description>Indicates whether the prediction probability array would be returned in the output</description>
+        <optional>true</optional>
+        <type>boolean</type>
+        <cardinality>1</cardinality>
+      </parameter>
     </parameters>
     <inputPorts>
       <inputPortSet>
