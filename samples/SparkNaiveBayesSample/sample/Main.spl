@@ -1,0 +1,131 @@
+/**
+ * Copyright (C) 2017 International Business Machines Corporation
+ * All Rights Reserved
+ */
+namespace sample;
+
+/**
+ * This is a sample application to demo the use of SparkNaiveBayesSentiment operator.
+ * The application takes a csv file with two identifiers (ivrcallid, channel) and text data called utterance.
+ * The sentiment operator passes the text data as input to the trained Naive Bayes model and predict the sentiment for the utterance.
+ * The sentiment score would be either 0=negative, 1=neutral or 2=positive. It also returns the probability
+ * of each of the sentiments which is returned as a list of double.
+ * 
+ * The Aggregate operator maintains a window of these tuples partitioned by the identifier, ivrcallid, and outputs overall sentiment 
+ * across the window. The goal of the aggregation is to identify negative sentiment and give it higher priority over positive and neutral sentiments.
+ * Aggregate custom result function imlements the logic for calculating the sentiment for overall window and would emit
+ * negative score if any of the channel sentiment in the window has negative sentiment.
+ */
+
+use com.ibm.streamsx.sparkmllib.classification::SparkNaiveBayes ;
+use com.ibm.streamsx.sparkmllib.utils::getFeatureVector ;
+use spl.collection::*;
+
+// type to hold the sentiment scores for each channel for aggregation
+type SentimentContext = map<rstring, list<list<float64>>> sentimentByChannel;
+
+// format of the csv input file
+type InputType = tuple<rstring ivrcallid, rstring channel, rstring utterance>;
+type InputWithVectorType = InputType, tuple<list<float64> featureVector>;
+
+//type of the output of naive bayes sentiment operator
+type ScoredUtteranceType = InputType,tuple<float64 analysisResult, list<float64> probabilities>;
+// type for the output after sentiment aggregation
+type OverallScoredUtteranceType = ScoredUtteranceType, tuple<float64 overallSentiment>;
+
+// Custom init function for Aggregate operator
+boolean init(mutable SentimentContext ctx) {
+   clearM(ctx.sentimentByChannel);
+   return false;
+}
+
+/**
+ * custom process operator for Aggregate operator
+ * It groups the utterances by channels and accumulates the sentiment score 
+ * probabilities as list of list of floats for each channel. 
+ */
+boolean process(tuple<ScoredUtteranceType>  scoredUtterances, mutable SentimentContext ctx){
+   mutable list<list<float64>> sentimentList = [];
+   if(has(ctx.sentimentByChannel,scoredUtterances.channel)){
+	  sentimentList= ctx.sentimentByChannel[scoredUtterances.channel];
+   }
+   appendM(sentimentList,scoredUtterances.probabilities);
+   insertM(ctx.sentimentByChannel,scoredUtterances.channel,sentimentList);
+  return false;
+}
+
+/**
+ * Custom result function for Aggregate operator
+ * For each set of utterances, it takes average of negative and positive sentiments for each channel 
+ * and picks min(negative,positive) sentiment for each channel.
+ * Then picks the minimum from across the channels
+ */
+float64 result(SentimentContext ctx) {
+  mutable float64 overallSentiment =9999999f; // set to max value
+  for(rstring key in ctx.sentimentByChannel){
+  	list<list<float64>> sentimentByChannelList = ctx.sentimentByChannel[key];
+  	mutable float64 totalPositivity = 0f;
+  	mutable float64 totalNegativity = 0f;
+    int32 totalCount = size(sentimentByChannelList);
+  	for(list<float64> sentimentProbs in sentimentByChannelList){
+  	 	totalNegativity = sentimentProbs[0];
+  	 	totalPositivity = sentimentProbs[2];
+  	}
+  	if(totalCount !=0){
+  		float64 positiveSentiment = totalPositivity/(float64)totalCount;
+  		float64 negativeSentiment = -totalNegativity/(float64)totalCount;
+  		float64 currSentiment = min(negativeSentiment,positiveSentiment);
+  		overallSentiment = min(overallSentiment,currSentiment);
+  	}  	
+  }
+  //if not updated, set it to zero
+  if(overallSentiment == 9999999f) overallSentiment = 0.0f;
+  return overallSentiment;
+}
+
+
+composite Main {
+	graph
+	
+	stream<rstring name> DirScan = DirectoryScan() {
+      param
+        directory : dataDirectory();
+        pattern : ".*csv";
+    }
+
+	stream<InputType> csvLineData = FileSource(DirScan){
+		param
+			format : csv ;
+	}
+	
+	stream<InputWithVectorType> csvLineVector = Functor(csvLineData){
+		output	csvLineVector : featureVector = getFeatureVector(utterance);
+	}
+	
+	stream<ScoredUtteranceType> scoredUtterances = SparkNaiveBayes(csvLineVector){
+		param
+			testDataAttr : featureVector;
+			modelPath : getApplicationDir() + "/etc/naivebayes_model";
+			getProbabilities : true; 
+	}
+	
+    stream<OverallScoredUtteranceType> aggScoredUtterances = Aggregate(scoredUtterances ) {
+       logic state : {
+        	mutable SentimentContext sentimentCtx;
+       }
+       window
+        	scoredUtterances : sliding, time(60), count(1), partitioned;
+       param
+       	 	partitionBy : ivrcallid;
+       output
+        	aggScoredUtterances :
+        	   overallSentiment = Custom (init(sentimentCtx), process(scoredUtterances, sentimentCtx),result (sentimentCtx));
+    }
+   
+   () as sink2 = Custom(aggScoredUtterances) {
+      logic onTuple aggScoredUtterances: {
+             	println(aggScoredUtterances);
+       		}
+ 	}
+
+}

@@ -87,6 +87,7 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
 * Describe spark master parameter
 * Add framework tests
 * Add test and release targets to main build.xml
+* New parameter paraneter getProbabilities in operator SparkNaiveBayes
 
 ## Version 1.2.0
 * Use of actual stark version 2.4.0
