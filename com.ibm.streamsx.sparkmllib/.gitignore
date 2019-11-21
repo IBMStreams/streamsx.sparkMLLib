@@ -1,2 +1,4 @@
 #The generated operator xml files
 /com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS/SparkCollaborativeFilteringALS.xml
+/com.ibm.streamsx.sparkmllib.utils/native.function/SPL_JNIFunctions_com_ibm_streamsx_sparkmllib_utils.h
+/com.ibm.streamsx.sparkmllib.utils/native.function/javaFunction.xml
