@@ -117,6 +117,7 @@
 		</exec>
 		<!-- spl-mt does not clean the xml model files for java op -->
 		<delete dir="com.ibm.streamsx.sparkmllib.collaborativefiltering/SparkCollaborativeFilteringALS"/>
+		<delete dir="com.ibm.streamsx.sparkmllib/com.ibm.streamsx.sparkmllib.utils/native.function"/>
 	</target>
 
 	<target name="jar-clean" depends="toolkit-index-clean"
