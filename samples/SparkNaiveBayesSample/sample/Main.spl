@@ -50,7 +50,7 @@ boolean process(tuple<ScoredUtteranceType>  scoredUtterances, mutable SentimentC
 	  sentimentList= ctx.sentimentByChannel[scoredUtterances.channel];
    }
    appendM(sentimentList,scoredUtterances.probabilities);
-   insertM(ctx.sentimentByChannel,scoredUtterances.channel,sentimentList);	
+   insertM(ctx.sentimentByChannel,scoredUtterances.channel,sentimentList);
   return false;
 }
 
@@ -87,45 +87,44 @@ float64 result(SentimentContext ctx) {
 composite Main {
 	graph
 	
-	stream<rstring name> DirScan = DirectoryScan() {                                                                                          
-      param                                                                                    
-        directory : dataDirectory();                                                               
-        pattern : ".*csv";                                                                   
-    }    
-    
+	stream<rstring name> DirScan = DirectoryScan() {
+      param
+        directory : dataDirectory();
+        pattern : ".*csv";
+    }
+
 	stream<InputType> csvLineData = FileSource(DirScan){
-		param 
-			format : csv ;			
+		param
+			format : csv ;
 	}
 	
 	stream<InputWithVectorType> csvLineVector = Functor(csvLineData){
-		 
-		output	csvLineVector : featureVector = getFeatureVector(utterance);		
+		output	csvLineVector : featureVector = getFeatureVector(utterance);
 	}
 	
 	stream<ScoredUtteranceType> scoredUtterances = SparkNaiveBayes(csvLineVector){
 		param
 			testDataAttr : featureVector;
-			modelPath : "/media/sf_vmshare/sentiment.model"; 
+			modelPath : getApplicationDir() + "/etc/naivebayes_model";
 			getProbabilities : true; 
 	}
 	
-    stream<OverallScoredUtteranceType> aggScoredUtterances = Aggregate(scoredUtterances ) {  
+    stream<OverallScoredUtteranceType> aggScoredUtterances = Aggregate(scoredUtterances ) {
        logic state : {
         	mutable SentimentContext sentimentCtx;
-       }                                                                               
-       window                                                                          
-        	scoredUtterances : sliding, time(60), count(1), partitioned;                               
-       param                                                                                                                                    
-       	 	partitionBy : ivrcallid;                                                        
-       output                                                                          
-        	aggScoredUtterances : 
-        	   overallSentiment = Custom (init(sentimentCtx), process(scoredUtterances, sentimentCtx),result (sentimentCtx));                  
-    }      
+       }
+       window
+        	scoredUtterances : sliding, time(60), count(1), partitioned;
+       param
+       	 	partitionBy : ivrcallid;
+       output
+        	aggScoredUtterances :
+        	   overallSentiment = Custom (init(sentimentCtx), process(scoredUtterances, sentimentCtx),result (sentimentCtx));
+    }
    
-   () as sink2 = Custom(aggScoredUtterances) {    
-      logic onTuple aggScoredUtterances: {           
-             	println(aggScoredUtterances);             
+   () as sink2 = Custom(aggScoredUtterances) {
+      logic onTuple aggScoredUtterances: {
+             	println(aggScoredUtterances);
        		}
  	}
 

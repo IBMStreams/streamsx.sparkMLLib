@@ -49,7 +49,7 @@
       </parameter>
       <parameter>
         <name>getProbabilities</name>
-        <description>Indicates whether the prediction probability array would be returned in the output</description>
+        <description>Indicates whether the prediction probability array would be returned in the output. If true, the output port requires an attribute 'probabilities' of type 'list&lt;float64&gt;'. Default is false</description>
         <optional>true</optional>
         <type>boolean</type>
         <cardinality>1</cardinality>
@@ -77,7 +77,7 @@
     </inputPorts>
     <outputPorts>
       <outputPortSet>
-        <description>This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type float64.</description>
+        <description>This output port is required. The operator passes through all attributes on the input port as-is to the output port. In addition, it expects an attribute called 'analysisResult' of type float64. Optionally an attribute 'probabilities' of type 'list&lt;float64&gt;' is required.</description>
         <windowPunctuationOutputMode>Free</windowPunctuationOutputMode>
         <cardinality>1</cardinality>
         <optional>false</optional>

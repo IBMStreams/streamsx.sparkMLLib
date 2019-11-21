@@ -14,7 +14,7 @@ import org.apache.spark.mllib.linalg.Vector;
 import com.ibm.streams.function.model.Function;
 import com.ibm.streams.toolkit.model.ToolkitLibraries;
 
-@ToolkitLibraries({"opt/downloaded/*","lib/*"})
+@ToolkitLibraries({"opt/downloaded/*","impl/lib/*"})
 public class Util {
     private static HashingTF hashingTF = new HashingTF();
     private static org.apache.spark.mllib.feature.HashingTF featureHash = new org.apache.spark.mllib.feature.HashingTF(hashingTF.getNumFeatures());
@@ -24,7 +24,7 @@ public class Util {
      * @param textData
      * @return
      */
-    @Function(name="getFeatureVector", description="Transforms text into a list of float64 values")
+    @Function(name="getFeatureVector", description="Transforms text into a list of float64 values. Use the algorithm of org.apache.spark.ml.feature.HashingTF")
     public static double[] getFeatureVector(String textData) {
         int size = hashingTF.getNumFeatures();
 
@@ -62,7 +62,7 @@ public class Util {
             j++;
         }
 
-        Vector sv = new SparseVector(size, indices, values);   
+        Vector sv = new SparseVector(size, indices, values);
         
         return sv.toDense().toArray() ;
     }

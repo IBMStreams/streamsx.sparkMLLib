@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.spark.SparkContext;
 import org.apache.spark.mllib.classification.NaiveBayesModel;
-import org.apache.spark.mllib.linalg.DenseVector;
 import org.apache.spark.mllib.linalg.Vector;
 
 import com.ibm.streams.operator.Attribute;
@@ -21,14 +20,12 @@ import com.ibm.streams.operator.StreamSchema;
 import com.ibm.streams.operator.StreamingInput;
 import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.OperatorContext.ContextCheck;
-import com.ibm.streams.operator.Type.MetaType;
 import com.ibm.streams.operator.compile.OperatorContextChecker;
 import com.ibm.streams.operator.logging.TraceLevel;
 import com.ibm.streams.operator.model.InputPortSet;
 import com.ibm.streams.operator.model.OutputPortSet;
 import com.ibm.streams.operator.model.Parameter;
 import com.ibm.streamsx.sparkmllib.AbstractSparkMLlibListToDoubleOperator;
-import com.ibm.streams.operator.logging.LoggerNames;
 
 
 //@PrimitiveOperator(description="This operator provides support for analysis of incoming tuple data against Apache Spark's naive bayes machine learning library.")
@@ -87,6 +84,7 @@ public class SparkNaiveBayes extends AbstractSparkMLlibListToDoubleOperator<Naiv
 		
 		//For each incoming tuple, extract the testDataAttr attribute value as a list of doubles
 		try {
+			@SuppressWarnings("unchecked")
 			List<Double> testDataList = (List<Double>)tuple.getList(testDataAttr.getIndex());
 			
 			//Generate an output tuple
@@ -100,7 +98,7 @@ public class SparkNaiveBayes extends AbstractSparkMLlibListToDoubleOperator<Naiv
 
 			//perform the specific operation using the specific model
 			double result = performOperation(features);
-			
+
 			//Add the prediction result 
 			out.setDouble(ANALYSISRESULT_ATTRIBUTE, result);
 
