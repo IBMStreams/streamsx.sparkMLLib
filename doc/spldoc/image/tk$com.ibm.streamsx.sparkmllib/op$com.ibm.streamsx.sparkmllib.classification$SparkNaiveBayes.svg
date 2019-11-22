@@ -77,7 +77,7 @@
       /><text x="48.65" y="88.0"
       >Required: testDataAttr, modelPath / Optional: </text
       ><text x="48.65" y="103.0"
-      >params, sparkMaster</text
+      >params, sparkMaster, getProbabilities</text
       ><set attributeName="visibility" from="hidden" end="sdt2.mouseout" to="visible" begin="sdt2.mouseover"
     /></g
     ><g visibility="hidden" style="stroke:none;font-style:italic;font-size:12px;font-family:&apos;Helvetica&apos;,&apos;SansSerif&apos;;"

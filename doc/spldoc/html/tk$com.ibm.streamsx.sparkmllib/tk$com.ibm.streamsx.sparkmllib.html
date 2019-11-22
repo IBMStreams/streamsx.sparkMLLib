@@ -7,36 +7,48 @@
 <meta name="copyright" content="(C) Copyright 2005"/>
 <meta name="DC.rights.owner" content="(C) Copyright 2005"/>
 <meta name="DC.Type" content="reference"/>
-<meta name="DC.Title" content="Toolkit com.ibm.streamsx.sparkmllib 1.2.0"/>
+<meta name="DC.Title" content="Toolkit com.ibm.streamsx.sparkmllib 1.3.0"/>
 <meta name="DC.Format" content="XHTML"/>
 <meta name="DC.Identifier" content="spldoc_toolkit"/>
 <link rel="stylesheet" type="text/css" href="../../html/commonltr.css"/>
 <link rel="stylesheet" type="text/css" href="../../html/spldoc.css"/>
-<title>Toolkit com.ibm.streamsx.sparkmllib 1.2.0</title>
+<title>Toolkit com.ibm.streamsx.sparkmllib 1.3.0</title>
 </head>
 <body id="spldoc_toolkit">
 
 
-<h1 class="title topictitle1 spltoolkitname">Toolkit <tt class="ph tt">com.ibm.streamsx.sparkmllib 1.2.0</tt></h1>
+<h1 class="title topictitle1 spltoolkitname">Toolkit <tt class="ph tt">com.ibm.streamsx.sparkmllib 1.3.0</tt></h1>
 
 <div class="body refbody">
 <div class="section">
 <p class="p">
-<a class="xref" href="../toolkits/toolkits.html">IBMStreams streamsx.sparkMLLib Toolkit</a> &gt; com.ibm.streamsx.sparkmllib 1.2.0</p>
+<a class="xref" href="../toolkits/toolkits.html">IBMStreams streamsx.sparkMLLib Toolkit</a> &gt; com.ibm.streamsx.sparkmllib 1.3.0</p>
 
 </div>
 
 <div class="section"><h2 class="title sectiontitle splhead-1">General Information</h2>
 
 
-<p class="p">    Apache Spark is a fast general purpose clustering system that is well suited for machine learning algorithms.      MLlib is a machine learning library provided with Spark with support for common machine learning algorithms      including classification, regression, collaborative filtering and others. This toolkit allows Spark's MLlib library       to be used for real-time scoring of data in InfoSphere Streams.
+<p class="p">      Apache Spark is a fast general purpose clustering system that is well suited for machine learning algorithms.       MLlib is a machine learning library provided with Spark with support for common machine learning algorithms       including classification, regression, collaborative filtering and others. This toolkit allows Spark's MLlib library        to be used for real-time scoring of data in InfoSphere Streams.
+</p>
+
+<p class="p">      The toolkit is based on org.apache.spark.spark-mllib 2.4.4 (Scala 2.11; hadoop 2.6.5)
+</p>
+
+<p class="p">      This set of operators that provide real-time scoring based on Apache Sparkmllib.       Currently, each operator initializes a SparkContext which makes it behave as a spark "driver".        Hence, there is 1 spark job for every operator under which scoring occurs. By default, the job runs locally in        thread but you can optionally pass a spark master location (parameter sparkMaster) to run it on a cluster. 
+</p>
+
+<p class="p">      Some models like the collaborative filtering one store their internal state as RDDs so when we ask for scoring,        the action runs against these internal state RDDs. In most cases, RDDs are also created during the model load        process. If you pass a remote spark master then the operation may be performed on one or more remote worker        machines known to the master node and the results passed back to the driver (which in our case is the operator).
+</p>
+
+<p class="p">      Actually can't have multiple spark contexts in a single JVM, so you can't fuse multiple operators into one PE. To make sure        that multiple sparkmllib operators use different PE's use operator configuration placement clause (partitionExlocation).
 </p>
 
 <dl class="dl">
   
   <dt class="dt dlterm">Version</dt>
 
-  <dd class="dd">1.2.0</dd>
+  <dd class="dd">1.3.0</dd>
 
   
   
@@ -65,6 +77,9 @@
 <dd class="dd"/>
 
     <dt class="dt dlterm"><a class="xref" href="ix$Operator.html">Operators</a></dt>
+<dd class="dd"/>
+
+    <dt class="dt dlterm"><a class="xref" href="ix$Function.html">Functions</a></dt>
 <dd class="dd"/>
 
   </dl>
@@ -171,6 +186,25 @@
 <li class="sli"><a class="xref" href="op$com.ibm.streamsx.sparkmllib.tree$SparkEnsembleGradientBoostedTrees.html">SparkEnsembleGradientBoostedTrees</a></li>
 
 <li class="sli"><a class="xref" href="op$com.ibm.streamsx.sparkmllib.tree$SparkEnsembleRandomForest.html">SparkEnsembleRandomForest</a></li>
+
+</ul>
+
+        </dd>
+
+      </dl>
+</dd>
+
+         
+      <dt class="dt dlterm splpart"><a class="xref" href="ns$com.ibm.streamsx.sparkmllib.utils.html">com.ibm.streamsx.sparkmllib.utils</a></dt>
+
+      <dd class="dd"/>
+
+      <dd class="dd"><dl class="dl">
+        <dt class="dt dlterm">Functions</dt>
+
+        <dd class="dd">
+<ul class="sl simple">
+<li class="sli"><a class="xref" href="fj$com.ibm.streamsx.sparkmllib.utils.html#spldoc_functions__getFeatureVector.T">getFeatureVector(T)</a></li>
 
 </ul>
 
