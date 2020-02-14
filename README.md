@@ -77,6 +77,9 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
 6. Run the application. You can submit the application as a job by using the **streamtool submitjob** command or by using Streams Studio. 
 
 # What's changed
+## Version 1.3.1
+* Update internationalization messages
+
 ## Versiom 1.3.0
 * The toolkit not longer depend on an installation of Apache Spark and does not need a SPARK_HOME environment variable,
   The toolkit bundles the Sparkmllib libraries along with the toolkit code
