@@ -7,7 +7,6 @@ To learn more about Streams:
 * [IBM Streams on Github](http://ibmstreams.github.io)
 * [Introduction to Streams Quick Start Edition](http://ibmstreams.github.io/streamsx.documentation/docs/4.3/qse-intro/)
 * [Streams Getting Started Guide](http://ibmstreams.github.io/streamsx.documentation/docs/4.3/qse-getting-started/)
-* [StreamsDev](https://developer.ibm.com/streamsdev/)
 
 # Developing and running applications that use the SparkMLLib Toolkit
 
@@ -78,5 +77,4 @@ Alternatively, you can fully qualify the operators that are provided by toolkit 
 
 # What's changed
 
-see in file /com.ibm.streamsx.sparkmllib/CHANGELOG.md
-
+[CHANGELOG.md](com.ibm.streamsx.sparkmllib/CHANGELOG.md)
