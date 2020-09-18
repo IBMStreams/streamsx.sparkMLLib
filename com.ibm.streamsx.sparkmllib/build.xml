@@ -69,6 +69,7 @@
 		<fail unless="env.M2_HOME" message="Environment variable M2_HOME not set. Please set this to point to the path of maven home directory" />
 		<mkdir dir="${ext.downloads.dir}" />
 		<exec executable="${maven.bin}" failonerror="true">
+			<arg value="--batch-mode" />
 			<arg value="dependency:copy-dependencies" />
 			<arg value="-DoutputDirectory=${ext.downloads.dir}" />
 		</exec>
