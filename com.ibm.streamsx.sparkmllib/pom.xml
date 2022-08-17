@@ -33,6 +33,7 @@
 			<artifactId>guava</artifactId>
 			<version>14.0.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.spark</groupId>
     			<artifactId>spark-mllib_2.13</artifactId>
@@ -40,7 +41,6 @@
     			<scope>provided</scope>
 		</dependency>
 		
-		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
