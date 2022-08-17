@@ -1,6 +1,9 @@
 # Changes
 ==========
 
+## Version 1.3.3:
+* Third-party lib updated to spaklib-2.13
+
 ## Version 1.3.2:
 * [#44](https://github.com/IBMStreams/streamsx.sparkMLLib/issues/44) Third-party lib updated to resolve security vulnerabilities (jackson-databind: 2.6.7.3)
 
